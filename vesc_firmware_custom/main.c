@@ -1,0 +1,554 @@
+/*
+	Copyright 2016 - 2021 Benjamin Vedder	benjamin@vedder.se
+
+	This file is part of the VESC firmware.
+
+	The VESC firmware is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The VESC firmware is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#pragma GCC optimize ("Os")
+
+#include "ch.h"
+#include "hal.h"
+#include "stm32f4xx_conf.h"
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include "mc_interface.h"
+#include "mcpwm.h"
+#include "mcpwm_foc.h"
+#include "ledpwm.h"
+#include "comm_usb.h"
+#include "ledpwm.h"
+#include "terminal.h"
+#include "hw.h"
+#include "app.h"
+#include "packet.h"
+#include "commands.h"
+#include "timeout.h"
+#include "encoder/encoder.h"
+#include "pwm_servo.h"
+#include "utils_math.h"
+#include "nrf_driver.h"
+#include "rfhelp.h"
+#include "spi_sw.h"
+#include "timer.h"
+#include "imu.h"
+#include "flash_helper.h"
+#include "conf_custom.h"
+#include "crc.h"
+#include "irq_handlers.h"
+#include "qmlui.h"
+#include "confgenerator.h"
+
+#if HAS_BLACKMAGIC
+#include "bm_if.h"
+#endif
+#include "shutdown.h"
+#include "mempools.h"
+#include "events.h"
+#include "main.h"
+
+#ifdef CAN_ENABLE
+#include "comm_can.h"
+#define CAN_FRAME_MAX_PL_SIZE	8
+#endif
+
+#ifdef USE_LISPBM
+#include "lispif.h"
+#endif
+
+/*
+ * HW resources used:
+ *
+ * TIM1: mcpwm
+ * TIM2: mcpwm_foc
+ * TIM5: timer
+ * TIM8: mcpwm
+ * TIM3: servo_dec/Encoder (HW_R2)/pwm_servo
+ * TIM4: WS2811/WS2812 LEDs/Encoder (other HW)
+ *
+ * DMA/stream	Device		Function
+ * 1, 2			I2C1		Nunchuk, temp on rev 4.5
+ * 1, 7			I2C1		Nunchuk, temp on rev 4.5
+ * 2, 4			ADC			mcpwm
+ *
+ */
+
+#ifdef FOC_PROFILE_EN
+foc_profile g_foc_profile;
+#endif
+
+__attribute__((section(".noinit"))) CrashInfo crash_info;
+
+// Private variables
+static THD_WORKING_AREA(periodic_thread_wa, 256);
+static THD_WORKING_AREA(led_thread_wa, 256);
+static THD_WORKING_AREA(flash_integrity_check_thread_wa, 256);
+static volatile bool m_init_done = false;
+
+static THD_FUNCTION(flash_integrity_check_thread, arg) {
+	(void)arg;
+
+	chRegSetThreadName("Flash check");
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);
+
+	for(;;) {
+		if (flash_helper_verify_flash_memory_chunk() == FAULT_CODE_FLASH_CORRUPTION) {
+			chSysHalt("Flash corruption detected.");
+		}
+
+		chThdSleepMilliseconds(6);
+	}
+}
+
+static THD_FUNCTION(led_thread, arg) {
+	(void)arg;
+
+	chRegSetThreadName("Main LED");
+
+	for(;;) {
+		mc_state state1 = mc_interface_get_state();
+		mc_interface_select_motor_thread(2);
+		mc_state state2 = mc_interface_get_state();
+		mc_interface_select_motor_thread(1);
+		if ((state1 == MC_STATE_RUNNING) || (state2 == MC_STATE_RUNNING)) {
+			ledpwm_set_intensity(LED_GREEN, 1.0);
+		} else {
+			ledpwm_set_intensity(LED_GREEN, 0.2);
+		}
+
+		mc_fault_code fault = mc_interface_get_fault();
+		mc_interface_select_motor_thread(2);
+		mc_fault_code fault2 = mc_interface_get_fault();
+		mc_interface_select_motor_thread(1);
+		if (fault != FAULT_CODE_NONE || fault2 != FAULT_CODE_NONE) {
+			for (int i = 0;i < (int)fault;i++) {
+				ledpwm_set_intensity(LED_RED, 1.0);
+				chThdSleepMilliseconds(250);
+				ledpwm_set_intensity(LED_RED, 0.0);
+				chThdSleepMilliseconds(250);
+			}
+
+			chThdSleepMilliseconds(500);
+
+			for (int i = 0;i < (int)fault2;i++) {
+				ledpwm_set_intensity(LED_RED, 1.0);
+				chThdSleepMilliseconds(250);
+				ledpwm_set_intensity(LED_RED, 0.0);
+				chThdSleepMilliseconds(250);
+			}
+
+			chThdSleepMilliseconds(500);
+		} else {
+			ledpwm_set_intensity(LED_RED, 0.0);
+		}
+
+		chThdSleepMilliseconds(10);
+	}
+}
+
+static THD_FUNCTION(periodic_thread, arg) {
+	(void)arg;
+
+	chRegSetThreadName("Main periodic");
+
+	for(;;) {
+		if (mc_interface_get_state() == MC_STATE_DETECTING) {
+			commands_send_rotor_pos(mcpwm_get_detect_pos());
+		}
+
+		disp_pos_mode display_mode = commands_get_disp_pos_mode();
+
+		switch (display_mode) {
+		case DISP_POS_MODE_ENCODER:
+			commands_send_rotor_pos(encoder_read_deg());
+			break;
+
+		case DISP_POS_MODE_PID_POS:
+			commands_send_rotor_pos(mc_interface_get_pid_pos_now());
+			break;
+
+		case DISP_POS_MODE_PID_POS_ERROR:
+			commands_send_rotor_pos(utils_angle_difference(mc_interface_get_pid_pos_set(), mc_interface_get_pid_pos_now()));
+			break;
+
+		default:
+			break;
+		}
+
+		if (mc_interface_get_configuration()->motor_type == MOTOR_TYPE_FOC) {
+			switch (display_mode) {
+			case DISP_POS_MODE_OBSERVER:
+				commands_send_rotor_pos(mcpwm_foc_get_phase_observer());
+				break;
+
+			case DISP_POS_MODE_ENCODER_OBSERVER_ERROR:
+				commands_send_rotor_pos(utils_angle_difference(mcpwm_foc_get_phase_observer(), mcpwm_foc_get_phase_encoder()));
+				break;
+
+			case DISP_POS_MODE_HALL_OBSERVER_ERROR:
+				commands_send_rotor_pos(utils_angle_difference(mcpwm_foc_get_phase_observer(), mcpwm_foc_get_phase_hall()));
+				break;
+
+			default:
+				break;
+			}
+		}
+	 
+		HW_TRIM_HSI(); // Compensate HSI for temperature
+
+		chThdSleepMilliseconds(10);
+	}
+}
+
+// When assertions enabled halve PWM frequency. The control loop ISR runs 40% slower
+void assert_failed(uint8_t* file, uint32_t line) {
+	commands_printf("Wrong parameters value: file %s on line %d\r\n", file, line);
+	mc_interface_release_motor();
+	while(1) {
+		chThdSleepMilliseconds(1);
+	}
+}
+
+bool main_init_done(void) {
+	return m_init_done;
+}
+
+uint32_t main_calc_hw_crc(void) {
+	uint32_t crc = 0;
+
+#ifdef QMLUI_SOURCE_HW
+	crc = crc32_with_init(data_qml_hw, DATA_QML_HW_SIZE, crc);
+#endif
+
+	for (int i = 0;i < conf_custom_cfg_num();i++) {
+		uint8_t *data = 0;
+		int len = conf_custom_get_cfg_xml(i, &data);
+		if (len > 0) {
+			crc = crc32_with_init(data, len, crc);
+		}
+	}
+
+	if (flash_helper_code_size(CODE_IND_QML) > 0) {
+		crc = crc32_with_init(
+				flash_helper_code_data(CODE_IND_QML),
+				flash_helper_code_size(CODE_IND_QML),
+				crc);
+	}
+
+	return crc;
+}
+
+#define PIN_CHECK() \
+		chThdSleep(1); \
+		if (palReadPad(GPIOA, 14) != READ_HALL2()) { \
+			goto check_end; \
+		}
+
+// Check if HALL2 and SWCLK (PA14) are connected together. If they
+// are we reset the configuration.
+static bool should_reset_config(void) {
+	bool res = false;
+
+	PIN_CHECK();
+
+	palSetPadMode(GPIOA, 14, PAL_MODE_INPUT);
+	PIN_CHECK();
+
+	palSetPadMode(GPIOA, 14, PAL_MODE_OUTPUT_PUSHPULL);
+
+	palSetPad(GPIOA, 14);
+	PIN_CHECK();
+
+	palClearPad(GPIOA, 14);
+	PIN_CHECK();
+
+	palSetPad(GPIOA, 14);
+	PIN_CHECK();
+
+	palClearPad(GPIOA, 14);
+	PIN_CHECK();
+
+	res = true;
+
+	check_end:
+	palSetPadMode(GPIOA, 14, PAL_MODE_INPUT);
+	palSetPadMode(GPIOA, 14, PAL_MODE_ALTERNATE(0));
+
+	return res;
+}
+
+int main(void) {
+	if (crash_info.magic != CRASH_INFO_MAGIC) {
+		// Erase the struct when the contents did not survive: first power-up
+		// from cold, SRAM decay after a long power loss, or a firmware update
+		// moving the section.
+		memset(&crash_info, 0, sizeof(crash_info));
+		crash_info.magic = CRASH_INFO_MAGIC;
+	}
+	crash_info.boot_count++;
+	crash_info.reset_flags = RCC->CSR;
+
+	// Clear the reset flags
+	RCC->CSR |= RCC_CSR_RMVF;
+
+	if ((crash_info.type != CRASH_NONE && crash_info.crash_boot + 1 == crash_info.boot_count) ||
+			(crash_info.reset_flags & (RCC_CSR_WDGRSTF | RCC_CSR_WWDGRSTF))) {
+		crash_info.crash_streak++;
+	} else {
+		crash_info.crash_streak = 0;
+	}
+
+	halInit();
+	chSysInit();
+
+	// Initialize the enable pins here and disable them
+	// to avoid excessive current draw at boot because of
+	// floating pins.
+#ifdef HW_HAS_DRV8313
+	INIT_BR();
+#endif
+
+	HW_EARLY_INIT();
+
+#ifdef BOOT_OK_GPIO
+	palSetPadMode(BOOT_OK_GPIO, BOOT_OK_PIN, PAL_MODE_OUTPUT_PUSHPULL);
+	palClearPad(BOOT_OK_GPIO, BOOT_OK_PIN);
+#endif
+
+	chThdSleepMilliseconds(100);
+
+	mempools_init();
+	events_init();
+	timer_init(); // Initialize timer here to allow I2C in hw_init
+	hw_init_gpio();
+	LED_RED_OFF();
+	LED_GREEN_OFF();
+
+	irq_handlers_init();
+
+	conf_general_init();
+
+	if (flash_helper_verify_flash_memory() == FAULT_CODE_FLASH_CORRUPTION)	{
+		// Loop here, it is not safe to run any code
+		while (1) {
+			chThdSleepMilliseconds(100);
+			LED_RED_ON();
+			chThdSleepMilliseconds(75);
+			LED_RED_OFF();
+		}
+	}
+
+	bool cfg_reset = should_reset_config();
+
+	// Also erase LBM and Qml on config reset
+	if (cfg_reset) {
+		flash_helper_erase_code(CODE_IND_LISP_CONST);
+		flash_helper_erase_code(CODE_IND_LISP);
+		flash_helper_erase_code(CODE_IND_QML);
+	}
+
+	ledpwm_init();
+	mc_interface_init(cfg_reset);
+
+	commands_init();
+
+#if COMM_USE_USB
+	comm_usb_init();
+#endif
+
+	app_uartcomm_initialize();
+	app_configuration *appconf = mempools_alloc_appconf();
+	if (cfg_reset) {
+		confgenerator_set_defaults_appconf(appconf);
+		conf_general_store_app_configuration(appconf);
+	} else {
+		conf_general_read_app_configuration(appconf);
+	}
+
+	app_uartcomm_start(UART_PORT_BUILTIN);
+	app_uartcomm_start(UART_PORT_EXTRA_HEADER);
+	app_set_configuration(appconf);
+
+	// This reads the appconf, that must be initialized first.
+#if CAN_ENABLE
+	comm_can_init();
+#endif
+
+#ifdef HW_HAS_PERMANENT_NRF
+	conf_general_permanent_nrf_found = nrf_driver_init();
+	if (conf_general_permanent_nrf_found) {
+		rfhelp_restart();
+	} else {
+		nrf_driver_stop();
+		// Set the nrf SPI pins to the general SPI interface so that
+		// an external NRF can be used with the NRF app.
+		spi_sw_change_pins(
+				HW_SPI_PORT_NSS, HW_SPI_PIN_NSS,
+				HW_SPI_PORT_SCK, HW_SPI_PIN_SCK,
+				HW_SPI_PORT_MOSI, HW_SPI_PIN_MOSI,
+				HW_SPI_PORT_MISO, HW_SPI_PIN_MISO);
+		HW_PERMANENT_NRF_FAILED_HOOK();
+	}
+#endif
+
+	// Threads
+	chThdCreateStatic(led_thread_wa, sizeof(led_thread_wa), NORMALPRIO, led_thread, NULL);
+	chThdCreateStatic(periodic_thread_wa, sizeof(periodic_thread_wa), NORMALPRIO, periodic_thread, NULL);
+	chThdCreateStatic(flash_integrity_check_thread_wa, sizeof(flash_integrity_check_thread_wa), LOWPRIO, flash_integrity_check_thread, NULL);
+
+	timeout_init();
+	timeout_configure(appconf->timeout_msec, appconf->timeout_brake_current, appconf->kill_sw_mode);
+
+#if HAS_BLACKMAGIC
+	bm_init();
+#endif
+
+	shutdown_init();
+
+	imu_reset_orientation();
+
+	chThdSleepMilliseconds(500);
+	m_init_done = true;
+
+#ifdef BOOT_OK_GPIO
+	palSetPad(BOOT_OK_GPIO, BOOT_OK_PIN);
+#endif
+
+#ifdef CAN_ENABLE
+	// Transmit a CAN boot-frame to notify other nodes on the bus about it.
+	if (appconf->can_mode == CAN_MODE_VESC) {
+		comm_can_transmit_eid(
+				app_get_configuration()->controller_id | (CAN_PACKET_NOTIFY_BOOT << 8),
+				(uint8_t *)HW_NAME, (strlen(HW_NAME) <= CAN_FRAME_MAX_PL_SIZE) ?
+						strlen(HW_NAME) : CAN_FRAME_MAX_PL_SIZE);
+	}
+#endif
+
+	mempools_free_appconf(appconf);
+
+	for(;;) {
+		chThdSleepMilliseconds(10);
+	}
+}
+
+static void stop_motor_and_reset(void) {
+	TIM_SelectOCxM(TIM1, TIM_Channel_1, TIM_ForcedAction_InActive);
+	TIM_CCxCmd(TIM1, TIM_Channel_1, TIM_CCx_Enable);
+	TIM_CCxNCmd(TIM1, TIM_Channel_1, TIM_CCxN_Disable);
+
+	TIM_SelectOCxM(TIM1, TIM_Channel_2, TIM_ForcedAction_InActive);
+	TIM_CCxCmd(TIM1, TIM_Channel_2, TIM_CCx_Enable);
+	TIM_CCxNCmd(TIM1, TIM_Channel_2, TIM_CCxN_Disable);
+
+	TIM_SelectOCxM(TIM1, TIM_Channel_3, TIM_ForcedAction_InActive);
+	TIM_CCxCmd(TIM1, TIM_Channel_3, TIM_CCx_Enable);
+	TIM_CCxNCmd(TIM1, TIM_Channel_3, TIM_CCxN_Disable);
+
+	TIM_GenerateEvent(TIM1, TIM_EventSource_COM);
+
+#ifdef HW_HAS_DRV8313
+		DISABLE_BR();
+#endif
+
+#ifdef HW_HAS_DUAL_MOTORS
+	TIM_SelectOCxM(TIM8, TIM_Channel_1, TIM_ForcedAction_InActive);
+	TIM_CCxCmd(TIM8, TIM_Channel_1, TIM_CCx_Enable);
+	TIM_CCxNCmd(TIM8, TIM_Channel_1, TIM_CCxN_Disable);
+
+	TIM_SelectOCxM(TIM8, TIM_Channel_2, TIM_ForcedAction_InActive);
+	TIM_CCxCmd(TIM8, TIM_Channel_2, TIM_CCx_Enable);
+	TIM_CCxNCmd(TIM8, TIM_Channel_2, TIM_CCxN_Disable);
+
+	TIM_SelectOCxM(TIM8, TIM_Channel_3, TIM_ForcedAction_InActive);
+	TIM_CCxCmd(TIM8, TIM_Channel_3, TIM_CCx_Enable);
+	TIM_CCxNCmd(TIM8, TIM_Channel_3, TIM_CCxN_Disable);
+
+	TIM_GenerateEvent(TIM8, TIM_EventSource_COM);
+
+#ifdef HW_HAS_DRV8313_2
+		ENABLE_BR_2();
+#endif
+#endif
+
+	NVIC_SystemReset();
+}
+
+void main_system_halt(const char *reason) {
+	crash_info.halt_reason = reason;
+	crash_info.type = CRASH_HALT;
+	crash_info.crash_boot = crash_info.boot_count;
+
+	stop_motor_and_reset();
+}
+
+void main_fault_handler(void) __attribute__((naked));
+void main_fault_handler(void) {
+	// Store the currently-in-use stack pointer to the first function argument
+	// and call fault_handler_c
+	__asm volatile (
+		"TST LR, #4\n"
+		"ITE EQ\n"
+		"MRSEQ R0, MSP\n"
+		"MRSNE R0, PSP\n"
+		"B fault_handler_c\n"
+	);
+}
+
+void fault_handler_c(uint32_t *hardfault_args) {
+	// Store the registers dumped on the stack after a crash
+	crash_info.registers.r0 = hardfault_args[0];
+	crash_info.registers.r1 = hardfault_args[1];
+	crash_info.registers.r2 = hardfault_args[2];
+	crash_info.registers.r3 = hardfault_args[3];
+	crash_info.registers.r12 = hardfault_args[4];
+	crash_info.registers.lr = hardfault_args[5];
+	crash_info.registers.pc = hardfault_args[6];
+	crash_info.registers.psr = hardfault_args[7];
+
+	// Store the crash information registers
+	crash_info.registers.cfsr = SCB->CFSR;
+	crash_info.registers.hfsr = SCB->HFSR;
+	crash_info.registers.mmfar = SCB->MMFAR;
+	crash_info.registers.bfar = SCB->BFAR;
+	crash_info.registers.afsr = SCB->AFSR;
+	crash_info.registers.shcsr = SCB->SHCSR;
+
+	crash_info.type = CRASH_REGISTERS;
+	crash_info.crash_boot = crash_info.boot_count;
+
+	stop_motor_and_reset();
+}
+
+// newlib's setjmp carries EHABI unwind annotations whose personality routine
+// references pull the ~4 kB libgcc unwinder into the image. Nothing here ever
+// unwinds, satisfy the references locally.
+void __aeabi_unwind_cpp_pr0(void) {}
+void __aeabi_unwind_cpp_pr1(void) {}
+void __aeabi_unwind_cpp_pr2(void) {}
+
+// newlib's default __assert_func prints to stderr, dragging fprintf and the
+// stdio stream machinery (~2.4 kB) into the image. Halt locally instead.
+void __assert_func(const char *file, int line, const char *func, const char *expr) {
+	(void)file;
+	(void)line;
+	(void)func;
+
+	chSysHalt(expr);
+	while (true);
+}

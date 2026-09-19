@@ -1,0 +1,38 @@
+# Workspace reports and temporary rendering artifacts
+/outputs/
+/tmp/
+
+# Arduino build output and editor files
+*.elf
+*.hex
+*.bin
+*.map
+*.o
+*.d
+*.obj
+*.exe
+.vscode/
+.idea/
+
+# Keep the original upstream Git metadata locally, but do not publish it.
+/vesc_firmware_custom/.git.local-backup/
+
+# VESC generated files, local backups, captures, and tool downloads
+/vesc_firmware_custom/build/
+/vesc_firmware_custom/build_*/
+/vesc_firmware_custom/b10/
+/vesc_firmware_custom/b11/
+/vesc_firmware_custom/output/
+/vesc_firmware_custom/backups/
+/vesc_firmware_custom/tmp/
+/vesc_firmware_custom/release/
+/vesc_firmware_custom/buildbldc_lite_24.dep/
+/vesc_firmware_custom/tests/*.exe
+/vesc_firmware_custom/**/*.dep
+/vesc_firmware_custom/archive_unsupported_48V/*.DO_NOT_FLASH
+/vesc_firmware_custom/lispBM/lispBM/test_reports/
+/vesc_firmware_custom/minimal_port/boot_debug/output/
+
+# Local operating-system files
+.DS_Store
+Thumbs.db
