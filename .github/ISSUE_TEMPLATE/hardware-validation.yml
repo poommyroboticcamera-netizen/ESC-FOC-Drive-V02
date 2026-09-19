@@ -1,0 +1,46 @@
+name: Hardware validation record
+description: Submit repeatable evidence from a controlled board test.
+title: "[Validation]: "
+labels:
+  - hardware
+body:
+  - type: input
+    id: revision
+    attributes:
+      label: Board and assembly revision
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Firmware commit
+    validations:
+      required: true
+  - type: input
+    id: equipment
+    attributes:
+      label: Supply and measurement equipment
+      description: Include current limit, probe type and instrument model where relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: procedure
+    attributes:
+      label: Procedure
+      description: Provide repeatable steps and identify whether the motor was disconnected.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Measurements and result
+      description: Include acceptance limits, measured values and links to sanitized evidence.
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: The tested commit, hardware revision and operating conditions are recorded above.
+          required: true

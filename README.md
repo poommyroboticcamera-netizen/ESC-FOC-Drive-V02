@@ -1,8 +1,8 @@
 <div align="center">
 
-<a href="hardware/SCH_v2_2026-08-01.pdf"><img src="docs/assets/esc-foc-drive-schematic-preview.png" alt="ESC FOC Drive V02 three-phase gate drive schematic" width="100%"></a>
+<a href="hardware/README.md"><img src="docs/assets/esc-foc-drive-board-3d.png" alt="ESC FOC Drive V02 actual PCB 3D render" width="74%"></a>
 
-<sub>คลิกภาพเพื่อเปิด schematic ฉบับเต็ม 5 หน้า</sub>
+<sub>PCB 3D render from the V02 design · คลิกภาพเพื่อเปิด hardware workspace</sub>
 
 # ESC-FOC-Drive-V02
 
@@ -14,7 +14,11 @@
 [![Target](https://img.shields.io/badge/target-24_V_bring--up-0B1220?style=for-the-badge&logo=lightning&logoColor=A78BFA)](#project-at-a-glance)
 [![Status](https://img.shields.io/badge/status-engineering_prototype-DC2626?style=for-the-badge)](#safety-and-project-status)
 
-[Overview](#overview) · [Architecture](#system-architecture) · [Pin map](#hardware-map) · [Getting started](#getting-started) · [Hardware assets](hardware/README.md) · [Safety](#safety-and-project-status)
+[![Last commit](https://img.shields.io/github/last-commit/poommyroboticcamera-netizen/ESC-FOC-Drive-V02?style=flat-square&color=2563EB)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/commits/main)
+[![Repository size](https://img.shields.io/github/repo-size/poommyroboticcamera-netizen/ESC-FOC-Drive-V02?style=flat-square&color=0891B2)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02)
+[![Issues](https://img.shields.io/github/issues/poommyroboticcamera-netizen/ESC-FOC-Drive-V02?style=flat-square&color=7C3AED)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/issues)
+
+[Overview](#overview) · [Architecture](#system-architecture) · [Pin map](#hardware-map) · [Getting started](#getting-started) · [Validation](#validation-evidence) · [Hardware assets](hardware/README.md) · [Safety](#safety-and-project-status)
 
 </div>
 
@@ -28,6 +32,16 @@ Custom firmware อิงจาก [VESC firmware](https://github.com/vedderb/bl
 
 > [!CAUTION]
 > นี่คือ engineering prototype ไม่ใช่ ESC สำหรับใช้งานจริงหรือระบบที่เกี่ยวข้องกับความปลอดภัย ภาคกำลังอาจสร้างกระแสสูง ความร้อน แรงดันย้อนกลับ และการหมุนโดยไม่คาดคิด Software trip และปุ่มหยุดไม่สามารถแทน hardware over-current shutdown, fuse, current-limited supply และเครื่องมือวัดแบบ isolated ได้
+
+## Engineering principles
+
+<table>
+<tr>
+<td width="33%" align="center"><strong>Safety-first bring-up</strong><br><sub>เริ่มจาก logic, ADC และ gate waveform ก่อนต่อมอเตอร์หรือเพิ่มกำลัง</sub></td>
+<td width="33%" align="center"><strong>Traceable hardware</strong><br><sub>ผูก schematic, BOM, Gerber, pin map และ firmware target ไว้กับ revision เดียวกัน</sub></td>
+<td width="33%" align="center"><strong>Repeatable validation</strong><br><sub>เก็บ build evidence, test conditions, limits และ rollback path ให้ตรวจซ้ำได้</sub></td>
+</tr>
+</table>
 
 ## Project at a glance
 
@@ -112,7 +126,9 @@ flowchart LR
 
 <div align="center">
 
-<a href="hardware/README.md"><img src="docs/assets/esc-foc-drive-schematic-preview.png" alt="ESC FOC Drive V02 hardware schematic preview" width="82%"></a>
+<a href="hardware/README.md"><img src="docs/assets/esc-foc-drive-board-top.png" alt="ESC FOC Drive V02 actual PCB top view" width="58%"></a>
+
+<sub>Top-view PCB render showing the complete power and control layout</sub>
 
 </div>
 
@@ -191,6 +207,8 @@ Both sketches are open-loop bench tools. Neither is production motor-control fir
 ```text
 .
 ├── README.md                         Project landing page and safety overview
+├── CONTRIBUTING.md                   Contribution and validation requirements
+├── SECURITY.md                       Security and hardware-safety reporting
 ├── hardware/                         Schematic, BOM, Pick-and-Place and Gerber
 ├── docs/assets/                      README preview assets
 ├── arduino_stm32f405_bldc_test/      Onboard MCU bring-up sketch
@@ -232,6 +250,6 @@ No repository-wide license has been selected. Public visibility does not automat
 
 **Designed for observable, staged and repeatable motor-drive bring-up.**
 
-[Custom firmware](vesc_firmware_custom/README_BLDC_LITE_TH.md) · [Hardware workspace](hardware/README.md) · [First flash guide](vesc_firmware_custom/FLASH_AND_FIRST_TEST_TH.md) · [Report an issue](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/issues)
+[Custom firmware](vesc_firmware_custom/README_BLDC_LITE_TH.md) · [Hardware workspace](hardware/README.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Report an issue](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/issues)
 
 </div>

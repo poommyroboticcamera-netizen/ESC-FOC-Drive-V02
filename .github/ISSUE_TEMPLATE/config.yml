@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Safety and first-flash guide
+    url: https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/blob/main/vesc_firmware_custom/FLASH_AND_FIRST_TEST_TH.md
+    about: Review the controlled bring-up procedure before reporting a powered-test issue.
+  - name: Private security advisory
+    url: https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/security/advisories/new
+    about: Report vulnerabilities or protection bypasses privately.

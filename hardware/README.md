@@ -2,7 +2,13 @@
 
 โฟลเดอร์นี้เก็บ design package ของบอร์ด ESC-FOC-Drive-V02 ได้แก่ schematic 5 หน้า, BOM, Pick-and-Place และ Gerber สำหรับการ review และทำ manufacturing handoff
 
-![ESC FOC Drive V02 schematic](../docs/assets/esc-foc-drive-schematic-preview.png)
+<div align="center">
+
+<img src="../docs/assets/esc-foc-drive-board-3d.png" alt="ESC FOC Drive V02 actual PCB 3D render" width="78%">
+
+<sub>V02 PCB assembly render</sub>
+
+</div>
 
 > [!WARNING]
 > ไฟล์เหล่านี้เป็น engineering design package ไม่ใช่ production release ที่ผ่านการรับรอง ก่อนสั่งผลิตต้องยืนยัน revision, footprint, polarity, clearance, copper current capacity, connector pinout, stack-up และรายการชิ้นส่วนกับบอร์ดจริง
@@ -15,6 +21,22 @@
 | Bill of materials | 2026-07-31 | XLSX | [Open BOM](BOM_BLDCv02.xlsx) |
 | Pick-and-Place | 2026-07-31 | XLSX | [Open placement file](PickAndPlace_BLDCV02.xlsx) |
 | PCB manufacturing package | 2026-07-31 | Gerber ZIP | [Download Gerber](Gerber_BLDCV02.zip) |
+
+## Board gallery
+
+<table>
+<tr>
+<td width="48%" align="center"><img src="../docs/assets/esc-foc-drive-board-top.png" alt="PCB top view"><br><sub>Complete PCB top view</sub></td>
+<td width="52%" align="center"><img src="../docs/assets/esc-foc-drive-power-closeup.png" alt="Power supply and sensing layout close-up"><br><sub>Power-supply and signal-layout close-up</sub></td>
+</tr>
+</table>
+
+<details>
+<summary><strong>Open schematic preview</strong></summary>
+
+<a href="SCH_v2_2026-08-01.pdf"><img src="../docs/assets/esc-foc-drive-schematic-preview.png" alt="Gate-drive schematic preview"></a>
+
+</details>
 
 ## Schematic sections
 
