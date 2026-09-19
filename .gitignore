@@ -29,7 +29,8 @@
 /vesc_firmware_custom/buildbldc_lite_24.dep/
 /vesc_firmware_custom/tests/*.exe
 /vesc_firmware_custom/**/*.dep
-/vesc_firmware_custom/archive_unsupported_48V/*.DO_NOT_FLASH
+/vesc_firmware_custom/archive_unsupported_48V/*
+!/vesc_firmware_custom/archive_unsupported_48V/DO_NOT_FLASH_TH.md
 /vesc_firmware_custom/lispBM/lispBM/test_reports/
 /vesc_firmware_custom/minimal_port/boot_debug/output/
 
