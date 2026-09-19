@@ -1,0 +1,19 @@
+* text=auto
+*.c text eol=lf
+*.cpp text eol=lf
+*.h text eol=lf
+*.ino text eol=lf
+*.mk text eol=lf
+Makefile text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.ps1 text eol=crlf
+*.pdf binary
+*.png binary
+*.jpg binary
+*.zip binary
+*.xlsx binary
+*.ods binary
+*.elf binary
+*.hex binary
+*.bin binary
