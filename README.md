@@ -1,268 +1,183 @@
 <div align="center">
 
-<a href="hardware/README.md"><img src="docs/assets/esc-foc-drive-board-3d.png" alt="ESC FOC Drive V02 actual PCB 3D render" width="74%"></a>
-
-<sub>PCB 3D render from the V02 design · คลิกภาพเพื่อเปิด hardware workspace</sub>
+<a href="hardware/README.md"><img src="docs/assets/esc-foc-drive-board-3d.png" alt="ESC FOC Drive V02 PCB" width="74%"></a>
 
 # ESC-FOC-Drive-V02
 
-**แพลตฟอร์มทดลองไดรฟ์มอเตอร์ BLDC/PMSM สามเฟสบน STM32F405 พร้อม custom VESC firmware และชุด bring-up แบบควบคุมความเสี่ยง**
+**STM32F405 three-phase BLDC/FOC engineering platform พร้อม Arduino six-step และแอป SAT motor pilot สำหรับ Windows**
 
+[![Release](https://img.shields.io/badge/release-v1.0.0--app-2563EB?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app)
 [![MCU](https://img.shields.io/badge/MCU-STM32F405RGT6-0B1220?style=for-the-badge&logo=stmicroelectronics&logoColor=38BDF8)](https://www.st.com/en/microcontrollers-microprocessors/stm32f405rg.html)
-[![Firmware](https://img.shields.io/badge/firmware-VESC_custom-0B1220?style=for-the-badge&logo=c&logoColor=22C55E)](https://github.com/vedderb/bldc)
-[![Motor Control](https://img.shields.io/badge/control-BLDC_%2F_FOC-0B1220?style=for-the-badge&logo=speedtest&logoColor=F59E0B)](#motor-control-status)
-[![Target](https://img.shields.io/badge/target-24_V_bring--up-0B1220?style=for-the-badge&logo=lightning&logoColor=A78BFA)](#project-at-a-glance)
-[![Status](https://img.shields.io/badge/status-engineering_prototype-DC2626?style=for-the-badge)](#safety-and-project-status)
+[![Status](https://img.shields.io/badge/status-engineering_prototype-DC2626?style=for-the-badge)](#คำเตือนด้านความปลอดภัย)
 
-[![Last commit](https://img.shields.io/github/last-commit/poommyroboticcamera-netizen/ESC-FOC-Drive-V02?style=flat-square&color=2563EB)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/commits/main)
-[![Repository size](https://img.shields.io/github/repo-size/poommyroboticcamera-netizen/ESC-FOC-Drive-V02?style=flat-square&color=0891B2)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02)
-[![Issues](https://img.shields.io/github/issues/poommyroboticcamera-netizen/ESC-FOC-Drive-V02?style=flat-square&color=7C3AED)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/issues)
-
-[Overview](#overview) · [Arduino Releases](#arduino-six-step-and-tuning-app) · [Architecture](#system-architecture) · [Pin map](#hardware-map) · [Getting started](#getting-started) · [Validation](#validation-evidence) · [Hardware assets](hardware/README.md) · [Safety](#safety-and-project-status)
+[ดาวน์โหลดแอป](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) · [เลือก Firmware](#firmware-ที่มีให้เลือก) · [วิธีใช้แอป](#เริ่มใช้งาน-sat-motor-pilot) · [Hardware](hardware/README.md) · [รุ่นเก่า](#รุ่นเก่าที่ยังเก็บไว้)
 
 </div>
 
 ---
 
-## Overview
+## รุ่นแนะนำ: v1.0.0-app
 
-รีโปนี้รวม firmware, hardware configuration, schematic และชุดทดสอบสำหรับบอร์ด ESC V02 ที่ใช้ `STM32F405RGT6` ควบคุมอินเวอร์เตอร์สามเฟส การพัฒนาปัจจุบันเน้นการ bring-up ที่แรงดันและกระแสต่ำ การตรวจ gate waveform, current sensing และ sensorless BLDC six-step ก่อนขยายไปสู่การทดสอบ FOC บนฮาร์ดแวร์จริง
+รุ่นนี้เพิ่ม **SAT motor pilot** สำหรับดูสถานะ จูนค่าเริ่มต้น ควบคุม six-step และบันทึก phase telemetry ผ่าน USB CDC พร้อม firmware <code>v33-proto1</code> ที่ใช้คู่กันโดยเฉพาะ
 
-Custom firmware อิงจาก [VESC firmware](https://github.com/vedderb/bldc) และเพิ่ม target `fw_bldc_lite_24`, pin mapping, software interlock, current protection และคำสั่งตรวจสถานะสำหรับบอร์ดนี้โดยเฉพาะ นอกจากนี้ยังมี Arduino six-step release set แยกเป็นรุ่นวัดกระแส, ไม่วัดกระแส และรุ่นโปรโตคอลสำหรับแอป SAT motor pilot
+ดาวน์โหลดจาก [GitHub Release v1.0.0-app](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app):
+
+| ไฟล์ | ใช้สำหรับ |
+|:--|:--|
+| <code>SAT-motor-pilot-1.0.0-win-x64.exe</code> | แอป Windows x64 แบบ portable |
+| <code>stm32f405-sixstep-app-v33-proto1.zip</code> | Firmware ที่ตรงกับแอป |
+| <code>stm32f405-sixstep-current-v1.zip</code> | Six-step ผ่าน Serial Monitor แบบวัดกระแส |
+| <code>stm32f405-sixstep-no-current-v1.zip</code> | Six-step ผ่าน Serial Monitor แบบไม่วัดกระแส |
+| <code>SHA256SUMS.txt</code> | SHA-256 สำหรับตรวจไฟล์ดาวน์โหลด |
+
+> [!IMPORTANT]
+> SAT motor pilot รองรับเฉพาะ <code>fw=v33-proto1</code>, <code>protocol=1</code> และ <code>current_protection=OFF</code> แอปจะปฏิเสธ firmware คนละรุ่นเพื่อไม่ให้ส่งคำสั่งผิดโปรโตคอล
+
+## Firmware ที่มีให้เลือก
+
+| Profile | Source | Current sense | วิธีควบคุม | สถานะ |
+|:--|:--|:--|:--|:--|
+| App v33 | [stm32f405_sixstep_app_v33](arduino_sixstep_releases/stm32f405_sixstep_app_v33) | Diagnostic เท่านั้น, ยังไม่ยืนยันหน่วย A | SAT motor pilot | รุ่นแนะนำสำหรับแอป |
+| Current | [stm32f405_sixstep_current](arduino_sixstep_releases/stm32f405_sixstep_current) | INA181 U/V/W + software trip | Serial Monitor | Bench bring-up |
+| No current | [stm32f405_sixstep_no_current](arduino_sixstep_releases/stm32f405_sixstep_no_current) | ปิด ไม่อ่าน PC0/PC1/PC2 | Serial Monitor | Logic/gate test |
+| Custom VESC | [vesc_firmware_custom](vesc_firmware_custom) | Board-specific current path | VESC Tool / terminal | งานพัฒนาแยก |
+
+อ่านรายละเอียดการเลือกและแฟลชที่ [Arduino six-step release guide](arduino_sixstep_releases/README_TH.md)
+
+- **App v33** มี heartbeat 1500 ms, watchdog, telemetry, phase stream และ scope capture
+- **Current** มี zero calibration และ software trip แต่ไม่ใช่ hardware short-circuit protection
+- **No current** ไม่มี current feedback หรือ software trip ต้องจำกัดกระแสด้วยแหล่งจ่ายภายนอก
+- **Custom VESC** เป็น codebase คนละสาย ห้ามแฟลชสลับโดยไม่ตรวจ target และคู่มือ
+
+ไลบรารี [SolidGeek/VescUart](https://github.com/SolidGeek/VescUart) ไม่ได้ใช้กับ SAT motor pilot เพราะ VescUart ใช้ VESC binary packet protocol ส่วนแอปนี้ใช้ ASCII protocol ของ <code>v33-proto1</code> ผ่าน USB CDC
+
+## เริ่มใช้งาน SAT motor pilot
+
+### 1. แฟลช firmware ที่ตรงกับแอป
+
+1. ดาวน์โหลด <code>stm32f405-sixstep-app-v33-proto1.zip</code> แล้วแตกไฟล์
+2. เปิด <code>stm32f405_sixstep_app_v33.ino</code> ด้วย Arduino IDE 2
+3. ติดตั้งแพ็กเกจ **STM32 MCU based boards** ของ STMicroelectronics
+4. เลือก Board <code>Generic STM32F4 series</code>, part <code>Generic F405RGTx</code>
+5. เลือก USB <code>CDC (generic Serial supersede U(S)ART)</code> และ Low/Full Speed
+6. เลือก <code>STM32CubeProgrammer (SWD)</code> เมื่อใช้ ST-LINK
+7. กด **Verify** ก่อน Upload โดยยังไม่ต่อมอเตอร์และไม่จ่าย DC bus
+
+### 2. เปิดแอป
+
+1. ดาวน์โหลด <code>SAT-motor-pilot-1.0.0-win-x64.exe</code>
+2. เปิดไฟล์ แอปเป็น portable ไม่ต้องติดตั้ง Python
+3. ต่อ STM32F405 ด้วยสาย USB data
+4. กดรีเฟรช เลือก COM ของบอร์ด แล้วกด **Connect board**
+5. แอปตรวจ HELLO, เริ่มส่ง HEARTBEAT, อ่าน STATUS และเปิด phase stream อัตโนมัติ
+
+ถ้าเปิด COM ไม่ได้ ให้ปิด Arduino Serial Monitor, Arduino IDE, browser tab หรือ SAT motor pilot หน้าต่างอื่นที่กำลังใช้พอร์ตเดียวกัน แล้วตรวจ COM number ใน Windows Device Manager
+
+### 3. ทดสอบมอเตอร์
+
+1. ใช้แหล่งจ่ายแรงดันต่ำและ current limit ต่ำ
+2. เตรียมสวิตช์ตัด DC bus ที่เอื้อมถึงได้
+3. เชื่อมต่อแอปและตรวจว่าสถานะเป็น <code>DISARMED</code>
+4. กด ARM แล้วตั้ง duty/startup profile ต่ำ
+5. กด RUN และเฝ้าดู state, fault, duty, phase ADC และ BEMF lock
+6. กด STOP ทันทีเมื่อมอเตอร์สั่น ค้าง ร้อน หรือกระแสเพิ่มผิดปกติ
+
+ค่า Phase U/V/W เป็น raw ADC counts ไม่ใช่แรงดันที่สอบเทียบแล้ว ค่า current, RPM, bus voltage และ temperature ที่ยังไม่ยืนยันจะแสดงเป็น N/A แอปไม่สร้างค่าจำลอง
+
+## ฟังก์ชันของแอป
+
+- ARM / RUN / STOP และ signed duty
+- Direction, initial startup period, acceleration ramp และ duty response
+- State, fault, commutation timing, BEMF lock และ heartbeat
+- Phase U/V/W live trend สูงสุดประมาณ 10 samples/s
+- Scope snapshot สูงสุด 512 PWM-ON samples และ live short captures
+- Export CSV จากข้อมูลที่รับจริง
+- Serial console สำหรับ diagnostic
+- English/Thai UI
+
+ซอร์สอยู่ใน [bldc_tuner_windows](bldc_tuner_windows) หากต้องการรันผ่าน browser ให้เปิด <code>Start SAT motor pilot.bat</code> โดยมี Python 3 หรือ build Electron ด้วย <code>npm install</code> และ <code>npm run dist:win</code> ใน <code>bldc_tuner_windows/electron-shell</code>
+
+## Hardware overview
+
+| รายการ | รายละเอียด |
+|:--|:--|
+| MCU | STM32F405RGT6, ARM Cortex-M4F |
+| Power stage | Three-phase, six MOSFET bridge |
+| Gate driver | EG3112D จำนวน 3 ช่อง |
+| Current sense | INA181A1 gain 20 V/V, shunt 1 mΩ x3 |
+| Interfaces | USB CDC, CAN, PPM, SWD |
+| Main bring-up target | 24 V class, low-power controlled bench |
+
+### Hardware pin map
+
+| Function | STM32F405 pin |
+|:--|:--|
+| High-side U / V / W | PA8 / PA9 / PA10 |
+| Low-side U / V / W | PB13 / PB14 / PB15 |
+| Current U / V / W | PC0 / PC1 / PC2 |
+| Phase voltage U / V / W | PA0 / PA1 / PA2 |
+| Stop SW3 / SW4 | PC4 / PC5, active LOW |
+| USB FS DM / DP | PA11 / PA12 |
+| CAN1 RX / TX | PB8 / PB9 |
+| SWDIO / SWCLK | PA13 / PA14 |
+
+ไฟล์ผลิตและแบบวงจร:
+
+- [Hardware guide](hardware/README.md)
+- [Schematic ล่าสุด](hardware/SCH_drive_2026-09-22.pdf)
+- [PCB PDF ล่าสุด](hardware/PCB_V02_2026-09-22.pdf)
+- [BOM](hardware/BOM_BLDCv02.xlsx)
+- [Pick-and-Place](hardware/PickAndPlace_BLDCV02.xlsx)
+- [Gerber](hardware/Gerber_BLDCV02.zip)
+
+## รุ่นเก่าที่ยังเก็บไว้
+
+รุ่นใหม่ไม่ทับหรือลบ source เดิม:
+
+| โฟลเดอร์เดิม | เนื้อหา |
+|:--|:--|
+| [arduino_stm32f405_bldc_test](arduino_stm32f405_bldc_test) | STM32F405 open-loop bring-up รุ่นเดิม |
+| [arduino_eg2132_bldc_test](arduino_eg2132_bldc_test) | Arduino Uno/Nano gate-input test รุ่นเดิม |
+| [vesc_firmware_custom](vesc_firmware_custom) | Custom VESC source, reports และงานพัฒนาเดิม |
+
+หากต้องย้อนกลับ ให้ checkout commit/tag ที่ต้องการหรือใช้ source ในโฟลเดอร์เดิม ห้ามสมมติว่า protocol และคำสั่งของแต่ละรุ่นเข้ากันได้
+
+## โครงสร้าง Repository
+
+    arduino_sixstep_releases/         Current / no-current / app-v33 profiles
+    bldc_tuner_windows/               SAT motor pilot source
+    arduino_stm32f405_bldc_test/      Legacy STM32 bring-up (kept)
+    arduino_eg2132_bldc_test/         Legacy external Arduino test (kept)
+    vesc_firmware_custom/             Custom VESC development tree
+    hardware/                         Schematic, PCB, BOM, PnP, Gerber
+    docs/assets/                      README images
+
+Generated executables, Electron dependencies, build output และ temporary files ไม่ถูก commit; ดาวน์โหลด binary จาก GitHub Releases
+
+## สถานะการตรวจสอบ
+
+| รายการ | ผล |
+|:--|:--|
+| SAT motor pilot JavaScript syntax | ผ่าน |
+| Python localhost launcher | ผ่าน, HTTP 200 |
+| Electron Windows x64 portable build | ผ่าน |
+| App ↔ firmware handshake fields | ตรวจความสอดคล้องแล้ว |
+| Release ZIP structure / SHA-256 | ผ่าน |
+| Arduino v1 profiles compile ในรอบ release นี้ | ต้องกด Verify ใน Arduino IDE เนื่องจากเครื่อง build ไม่มี Arduino CLI |
+| ทดสอบกับบอร์ดและมอเตอร์จริง | ยังต้องดำเนินการ |
+
+การ compile และเปิดแอปได้ไม่ยืนยัน ADC timing, dead time, gate waveform, current accuracy หรือ fault response บนภาคกำลังจริง
+
+## คำเตือนด้านความปลอดภัย
 
 > [!CAUTION]
-> นี่คือ engineering prototype ไม่ใช่ ESC สำหรับใช้งานจริงหรือระบบที่เกี่ยวข้องกับความปลอดภัย ภาคกำลังอาจสร้างกระแสสูง ความร้อน แรงดันย้อนกลับ และการหมุนโดยไม่คาดคิด Software trip และปุ่มหยุดไม่สามารถแทน hardware over-current shutdown, fuse, current-limited supply และเครื่องมือวัดแบบ isolated ได้
+> โครงการนี้เป็น engineering prototype ไม่ใช่ ESC production หรือระบบ safety-rated ภาคกำลังสามารถสร้างกระแสสูง ความร้อน แรงดันย้อนกลับ และการหมุนโดยไม่คาดคิด
 
-## Arduino six-step and tuning app
+- ใช้ฟิวส์ แหล่งจ่ายจำกัดกระแส และสวิตช์ตัด DC bus
+- ตรวจ gate input และ gate waveform โดยไม่ต่อมอเตอร์ก่อน
+- ใช้ differential/isolated probe เมื่อวัด high-side ห้ามต่อ oscilloscope ground clip เข้ากับ phase node หรือ HO
+- Software trip, watchdog, heartbeat และปุ่ม STOP ไม่ทดแทน hardware over-current shutdown
+- ห้ามเพิ่ม duty เพื่อฝืนมอเตอร์ที่ stall หรือสั่น
+- ยังไม่อนุมัติให้ใช้กับ automotive, medical, human-carrying หรือระบบ safety-critical
 
-| รายการ | ตำแหน่ง | จุดประสงค์ |
-|:--|:--|:--|
-| Six-step วัดกระแส | [`arduino_sixstep_releases/stm32f405_sixstep_current`](arduino_sixstep_releases/stm32f405_sixstep_current) | Serial Monitor bring-up พร้อม INA181 diagnostic/software trip |
-| Six-step ไม่วัดกระแส | [`arduino_sixstep_releases/stm32f405_sixstep_no_current`](arduino_sixstep_releases/stm32f405_sixstep_no_current) | ตรวจ gate และ open-loop โดยไม่อ่าน PC0/PC1/PC2 |
-| Firmware สำหรับแอป | [`arduino_sixstep_releases/stm32f405_sixstep_app_v33`](arduino_sixstep_releases/stm32f405_sixstep_app_v33) | USB CDC `v33-proto1` พร้อม heartbeat และ telemetry |
-| SAT motor pilot | [`bldc_tuner_windows`](bldc_tuner_windows) | แอปจูน/ดูสถานะบน Windows สำหรับ firmware v33 เท่านั้น |
-
-เริ่มจาก [คู่มือเลือก firmware และวิธีใช้งาน](arduino_sixstep_releases/README_TH.md) ไฟล์ Windows portable และ ZIP ของแต่ละสเก็ตช์อยู่ในหน้า GitHub Releases เพื่อไม่เก็บ generated binaries ไว้ใน source tree
-
-ไลบรารี `SolidGeek/VescUart` ไม่ได้ใช้ในชุดนี้: VescUart ใช้ binary packet protocol ของ VESC แต่ SAT motor pilot ใช้ ASCII protocol เฉพาะของ `v33-proto1` ผ่าน USB CDC จึงไม่สามารถสลับใช้กันได้โดยตรง
-
-## Engineering principles
-
-<table>
-<tr>
-<td width="33%" align="center"><strong>Safety-first bring-up</strong><br><sub>เริ่มจาก logic, ADC และ gate waveform ก่อนต่อมอเตอร์หรือเพิ่มกำลัง</sub></td>
-<td width="33%" align="center"><strong>Traceable hardware</strong><br><sub>ผูก schematic, BOM, Gerber, pin map และ firmware target ไว้กับ revision เดียวกัน</sub></td>
-<td width="33%" align="center"><strong>Repeatable validation</strong><br><sub>เก็บ build evidence, test conditions, limits และ rollback path ให้ตรวจซ้ำได้</sub></td>
-</tr>
-</table>
-
-## Project at a glance
-
-| รายการ | Implementation | ค่าปัจจุบัน / สถานะ |
-|:--|:--|:--|
-| MCU | STM32F405RGT6, ARM Cortex-M4F | 168 MHz class |
-| Motor stage | Three-phase, six MOSFET bridge | U / V / W |
-| Gate driver | EG3112D half-bridge drivers | 3 channels |
-| Verified firmware target | Custom VESC `fw_bldc_lite_24` | Nominal 24 V |
-| Current sensing | INA181A1, gain 20 V/V | 1 mΩ shunt x3 |
-| PWM | TIM1 complementary outputs | Approx. 15 kHz switching, 1000 ns initial dead time |
-| Bring-up limits | Phase / input / duty | 0.5 A / 0.25 A / 5% |
-| Interfaces | USB, CAN, PPM, SWD | VESC Tool and debug access |
-| Safety state | Boot-time software interlock | Starts `DISARMED` |
-
-## Motor-control status
-
-| Capability | Status | Notes |
-|:--|:--|:--|
-| Arduino gate-drive test | Available | Six-step open-loop แยก current/no-current |
-| STM32 Arduino app firmware | Available | `v33-proto1` สำหรับ SAT motor pilot, bench use only |
-| Custom VESC build | Build verified | Target `fw_bldc_lite_24` |
-| Sensorless BLDC six-step | Current bring-up target | Locked as the safe initial motor type |
-| FOC | Source base available, hardware validation pending | Do not run motor detection yet |
-| Production/high-power use | Not approved | Hardware protection gaps remain |
-
-## Safety controls in firmware
-
-| Control | Current behavior |
-|:--|:--|
-| Gate startup | HIN/LIN forced LOW during early firmware initialization |
-| Arming | Requires `bldc_arm CONFIRM` after every boot |
-| Stop input | SW3 or SW4 disarms and requests a fault stop |
-| Normal over-current | Trips above 1.5 A for 4 consecutive control samples |
-| Emergency current cutoff | Trips immediately above 2.2 A raw magnitude |
-| Open-loop command | `foc_openloop_duty` disabled for this target |
-| Regeneration | Negative current constrained near zero during bring-up |
-
-These controls reduce software-side risk, but they do not compensate for missing hardware current cutoff, gate-driver fault feedback, MOSFET temperature sensing, or a physical VSUPPLY ADC.
-
-## System architecture
-
-```mermaid
-flowchart LR
-    subgraph Control[STM32F405 control]
-        CMD[USB / CAN / PPM]
-        SAFE[Interlock and fault checks]
-        CTRL[BLDC / FOC control core]
-        PWM[TIM1 complementary PWM]
-        ADC[Current and phase ADC]
-    end
-
-    subgraph Power[Three-phase power stage]
-        GD[3x EG3112D gate drivers]
-        BR[6-MOSFET bridge]
-        M[BLDC / PMSM motor]
-        CS[3x INA181A1 current sense]
-    end
-
-    CMD --> SAFE --> CTRL --> PWM --> GD --> BR --> M
-    BR --> CS --> ADC --> SAFE
-    ADC --> CTRL
-```
-
-คำสั่งมอเตอร์ผ่าน software interlock ก่อนเข้าสู่ control core ส่วนกระแสทั้งสามเฟสถูกอ่านกลับเข้าระบบ protection และ control loop โดยตรง
-
-## Hardware map
-
-| Function | Net / peripheral | STM32F405 pin |
-|:--|:--|:--|
-| High-side PWM U / V / W | TIM1 CH1 / CH2 / CH3 | PA8 / PA9 / PA10 |
-| Low-side PWM U / V / W | TIM1 complementary outputs | PB13 / PB14 / PB15 |
-| Current U / V / W | ADC current feedback | PC0 / PC1 / PC2 |
-| Phase voltage U / V / W | ADC phase feedback | PA0 / PA1 / PA2 |
-| Stop switches | SW3 / SW4, active LOW | PC4 / PC5 |
-| PPM input | Timer input | PB6 |
-| CAN | CAN1 RX / TX | PB8 / PB9 |
-| USB | USB FS DM / DP | PA11 / PA12 |
-| Programming | SWDIO / SWCLK | PA13 / PA14 |
-
-## Hardware design files
-
-<div align="center">
-
-<a href="hardware/README.md"><img src="docs/assets/esc-foc-drive-board-top.png" alt="ESC FOC Drive V02 actual PCB top view" width="58%"></a>
-
-<sub>Top-view PCB render showing the complete power and control layout</sub>
-
-</div>
-
-| Design asset | Available file |
-|:--|:--|
-| Electrical schematic | [Five-page schematic PDF](hardware/SCH_v2_2026-08-01.pdf) |
-| Bill of materials | [BOM spreadsheet](hardware/BOM_BLDCv02.xlsx) |
-| Assembly placement | [Pick-and-Place spreadsheet](hardware/PickAndPlace_BLDCV02.xlsx) |
-| PCB manufacturing | [Gerber package](hardware/Gerber_BLDCV02.zip) |
-| Hardware guide | [Revision and manufacturing notes](hardware/README.md) |
-
-ตรวจ revision, footprint, polarity, connector pinout, clearance และความสัมพันธ์ระหว่าง schematic, BOM, Pick-and-Place และ Gerber ทุกครั้งก่อนสั่งผลิต
-
-## Getting started
-
-### 1. Clone the repository
-
-```powershell
-git clone https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02.git
-cd ESC-FOC-Drive-V02
-```
-
-### 2. Read the bring-up documents
-
-เริ่มจากเอกสารเหล่านี้ตามลำดับ:
-
-1. [`vesc_firmware_custom/README_BLDC_LITE_TH.md`](vesc_firmware_custom/README_BLDC_LITE_TH.md)
-2. [`vesc_firmware_custom/FLASH_AND_FIRST_TEST_TH.md`](vesc_firmware_custom/FLASH_AND_FIRST_TEST_TH.md)
-3. [`vesc_firmware_custom/BUILD_INFO_TH.md`](vesc_firmware_custom/BUILD_INFO_TH.md)
-4. [`vesc_firmware_custom/CALIBRATION_2026-09-07_TH.md`](vesc_firmware_custom/CALIBRATION_2026-09-07_TH.md)
-
-### 3. Build the custom VESC target
-
-```sh
-cd vesc_firmware_custom
-make arm_sdk_install
-make fw_bldc_lite_24
-```
-
-The recorded verified build used ARM GNU Toolchain 14.2.1 and upstream VESC commit `4c111e2c5dcd2108a2c1029181940aa7f6d04dbd`. Build success does not prove electrical safety on the assembled board.
-
-### 4. Backup and flash
-
-Connect ST-LINK to SWD with the motor disconnected. Probe first, then create a 1 MiB backup before writing firmware:
-
-```powershell
-.\tools\flash_bldc_lite_24.ps1 -Probe
-.\tools\flash_bldc_lite_24.ps1 -BackupOnly
-.\tools\flash_bldc_lite_24.ps1 -Flash24V -MotorDisconnected -PowerLimited
-```
-
-The script refuses to flash unless the required safety flags are supplied. Do not use read-unprotect as part of this workflow because it can erase the original device contents.
-
-### 5. First power-up
-
-1. Keep the motor disconnected and use a current-limited supply.
-2. Connect VESC Tool over USB and run `bldc_hw_status`.
-3. Confirm target `BLDC_LITE_24`, current-sense type `INA181A1`, and state `DISARMED`.
-4. Check that the three current ADC channels are close to 2048 with no phase current.
-5. Verify HIN/LIN, gate voltage and dead time using suitable probes.
-6. Arm only after the electrical checks pass: `bldc_arm CONFIRM`.
-
-Do not start automatic Motor Detection until current polarity, current gain, dead time and gate waveforms have been validated on the actual board.
-
-## Arduino bring-up options
-
-| Test path | Board | Purpose | Documentation |
-|:--|:--|:--|:--|
-| STM32 onboard test | STM32F405RGT6 | Test mapped PWM, ADC, switches and six-step sequence | [STM32 test guide](arduino_stm32f405_bldc_test/README_TH.md) |
-| External logic test | Arduino Uno / Nano | Test EG2132-compatible gate inputs independently | [Arduino gate test guide](arduino_eg2132_bldc_test/README_TH.md) |
-
-Both sketches are open-loop bench tools. Neither is production motor-control firmware.
-
-## Repository structure
-
-```text
-.
-├── README.md                         Project landing page and safety overview
-├── CONTRIBUTING.md                   Contribution and validation requirements
-├── SECURITY.md                       Security and hardware-safety reporting
-├── hardware/                         Schematic, BOM, Pick-and-Place and Gerber
-├── docs/assets/                      README preview assets
-├── arduino_stm32f405_bldc_test/      Onboard MCU bring-up sketch
-├── arduino_eg2132_bldc_test/         External Arduino gate-drive sketch
-└── vesc_firmware_custom/
-    ├── hwconf/custom_bldc/            Board-specific VESC target
-    ├── motor/                         BLDC and FOC control changes
-    ├── tools/                         Build, backup, flash and test helpers
-    ├── tests/                         Host-side control/protection tests
-    └── docs/                          Porting and engineering records
-```
-
-Generated build outputs, local backups, firmware binaries, test reports and temporary renders are excluded from version control.
-
-## Validation evidence
-
-| Check | Recorded result |
-|:--|:--|
-| `fw_bldc_lite_24` compile | Passed |
-| Firmware text / data / bss | 449,556 / 2,812 / 172,864 bytes |
-| Vector table static check | Valid RAM stack pointer and Thumb reset vector |
-| Target metadata | `BLDC_LITE_24`, `INA181A1` present |
-| Arduino STM32 sketch compile | Passed, 44,008 bytes flash and 5,256 bytes RAM |
-| Physical validation | Still required for every assembled revision |
-
-See [`BUILD_INFO_TH.md`](vesc_firmware_custom/BUILD_INFO_TH.md) and the dated flash reports for the exact revision evidence. Historical test evidence must not be treated as approval for a different PCB, BOM or firmware commit.
-
-## Safety and project status
-
-Known hardware limitations include no independent over-current comparator, no gate-driver fault input to the MCU, no MOSFET temperature sensor, no physical VSUPPLY ADC and high-impedance HIN/LIN pins during the earliest reset interval. DC-link capacitance and gate loading also require waveform-based review.
-
-This repository is suitable for controlled engineering evaluation only. It is not released as a production motor controller, automotive component, medical device or safety-rated system.
-
-No repository-wide license has been selected. Public visibility does not automatically grant permission to copy, modify or redistribute project-specific files. The VESC-derived firmware and bundled third-party components remain subject to their respective upstream licenses.
-
----
-
-<div align="center">
-
-**Designed for observable, staged and repeatable motor-drive bring-up.**
-
-[Custom firmware](vesc_firmware_custom/README_BLDC_LITE_TH.md) · [Hardware workspace](hardware/README.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Report an issue](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/issues)
-
-</div>
+ไม่มี repository-wide license สำหรับไฟล์เฉพาะโครงการ การเปิดเป็น public ไม่ได้ให้สิทธิ์ใช้งานหรือแจกจ่ายโดยอัตโนมัติ ส่วน VESC และ third-party components อยู่ภายใต้ license ของต้นทาง
