@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b10">
+  <title>SAT motor pilot | Race Telemetry</title>
+  <link rel="icon" type="image/png" href="somboon-logo.png">
+  <link rel="stylesheet" href="styles.css?v=49">
+</head>
+<body>
+  <div class="shell">
+    <header class="masthead">
+      <div class="brand"><img class="brand-logo" src="somboon-logo.png" alt="Somboon Advance Technology"><div><strong>SAT motor pilot</strong><small>RACE TELEMETRY / STM32F405</small></div></div>
+      <div class="link"><span id="linkLamp" class="lamp"></span><div><strong id="linkState">OFFLINE</strong><small id="linkDetail">USB Serial ยังไม่เชื่อมต่อ</small></div></div>
+      <div class="connect-tools"><button id="languageBtn" class="button language-button" type="button" aria-label="Change language">ไทย</button><label class="sr-only" for="portSelect">COM port</label><select id="portSelect" class="port-select" aria-label="COM port"><option value="">เลือก COM port</option></select><button id="refreshPortsBtn" class="button port-refresh" type="button" aria-label="Refresh COM ports" title="Refresh COM ports">↻</button><button id="connectBtn" class="button primary">เชื่อมต่อบอร์ด</button><button id="disconnectBtn" class="button" disabled>ตัดการเชื่อมต่อ</button><button id="stopQuickBtn" class="button stop" disabled>STOP</button></div>
+    </header>
+
+    <div class="workspace">
+    <nav class="side-nav" aria-label="หน้าหลัก">
+      <div class="nav-caption">WORKSPACE</div>
+      <button class="nav-item active" data-page="dashboard"><span>01</span> ภาพรวม <b>›</b></button>
+      <button class="nav-item" data-page="control"><span>02</span> ควบคุมมอเตอร์ <b>›</b></button>
+      <button class="nav-item" data-page="rt"><span>03</span> RT / กราฟสด <b>›</b></button>
+      <button class="nav-item" data-page="phases"><span>04</span> ค่าสามเฟส <b>›</b></button>
+      <button class="nav-item" data-page="scope"><span>05</span> Scope / BEMF <b>›</b></button>
+      <button class="nav-item" data-page="diagnostics"><span>06</span> วินิจฉัย <b>›</b></button>
+      <div class="nav-foot"><strong>F405 / USB CDC</strong><small>REALTIME · 10 Hz PHASE</small><small>STATUS · 2 Hz</small></div>
+    </nav>
+    <main>
+      <div id="notice" class="notice">ใช้ Edge หรือ Chrome บนเครื่องที่ต่อ STM32F405 ผ่าน USB แล้วกดเชื่อมต่อบอร์ด</div>
+      <div class="page active" id="page-dashboard">
+      <section class="hero">
+        <div class="hero-title"><span class="overline">LIVE DRIVE / SIX STEP SENSORLESS</span><h1>Motor telemetry</h1><p>ข้อมูลจากเฟิร์มแวร์ v33-proto1 ผ่าน USB CDC</p></div>
+        <div class="hero-status"><span class="overline">CONTROLLER STATE</span><strong id="stateValue">—</strong><small id="faultValue">FAULT —</small></div>
+      </section>
+
+      <section class="overview-control panel" aria-label="Motor controls">
+        <div class="panel-head"><span>MOTOR CONTROL</span><small id="overviewControlState">Connect board to enable controls</small></div>
+        <div class="overview-control-grid">
+          <div class="overview-control-block"><label>DRIVE</label><div class="overview-button-row"><button id="overviewArmBtn" class="button" disabled>ARM</button><button id="overviewRunBtn" class="button primary" disabled>RUN</button><button id="overviewStopBtn" class="button stop" disabled>STOP MOTOR</button></div></div>
+          <div class="overview-control-block"><label for="overviewDutyInput">SIGNED DUTY / %</label><div class="overview-button-row"><input id="overviewDutyInput" type="number" min="-80" max="80" step="1" value="10"><button id="overviewSetDutyBtn" class="button" disabled>SET DUTY</button></div><input id="overviewDutySlider" type="range" min="-80" max="80" step="1" value="10" aria-label="Signed duty target"><label for="overviewResponseSelect" class="secondary-label">DUTY RESPONSE</label><div class="overview-button-row"><select id="overviewResponseSelect"><option value="10">Gentle</option><option value="20" selected>Standard</option><option value="30">Faster</option></select><button id="overviewSetResponseBtn" class="button" disabled>SET</button></div></div>
+          <div class="overview-control-block"><label for="overviewPeriodInput">TARGET PERIOD / µs</label><div class="overview-button-row"><input id="overviewPeriodInput" type="number" min="600" max="12000" step="1" value="3000"><button id="overviewSetPeriodBtn" class="button" disabled>SET</button></div></div>
+          <div class="overview-control-block"><label for="overviewStartInput">INITIAL STEP / µs</label><div class="overview-button-row"><input id="overviewStartInput" type="number" min="12000" max="30000" step="1000" value="20000"><button id="overviewSetStartBtn" class="button" disabled>SET</button></div><label for="overviewRampSelect" class="secondary-label">STARTUP ACCELERATION</label><div class="overview-button-row"><select id="overviewRampSelect"><option value="300">Gentle</option><option value="200" selected>Standard</option><option value="150">Faster</option></select><button id="overviewSetRampBtn" class="button" disabled>SET</button></div></div>
+          <div class="overview-control-block"><label>DIRECTION / STOP FIRST</label><div class="overview-button-row"><button id="overviewForwardBtn" class="button" disabled>FORWARD</button><button id="overviewReverseBtn" class="button" disabled>REVERSE</button></div></div>
+        </div>
+        <p class="overview-control-note">SET DUTY ยืนยันค่าที่ปรับ · 0 ส่ง STOP · บอร์ดตรวจขอบเขตค่าเอง · เปลี่ยนทิศและช่วงเริ่มหมุนได้เมื่อหยุดแล้ว</p>
+        <p class="overview-control-note" id="overviewProfileApplied">BOARD STARTUP: —</p>
+      </section>
+      <section class="race-grid">
+        <article class="dial-card panel">
+          <div class="panel-head"><span>DUTY OUTPUT</span><small>ค่าที่บอร์ดใช้จริง</small></div>
+          <div class="dial" id="dutyDial"><div class="dial-inner"><span class="dial-kicker">EFFECTIVE DUTY</span><strong id="effectiveDuty">—</strong><span class="dial-unit">%</span></div></div>
+          <div class="dial-footer"><div><span>TARGET</span><strong><b id="targetDuty">—</b> %</strong></div><div><span>PULSE</span><strong><b id="pulseDuty">—</b> %</strong></div><div><span>PWM</span><strong><b id="pwmValue">—</b> Hz</strong></div></div>
+        </article>
+
+        <article class="telemetry-card panel">
+          <div class="panel-head"><span>DRIVE DATA</span><small id="statusAge">รอข้อมูล</small></div>
+          <div class="data-grid">
+            <div><span>DIRECTION</span><strong id="directionValue">—</strong></div>
+            <div><span>COMMUTATION</span><strong id="stepValue">—</strong></div>
+            <div><span>BEMF LOCK</span><strong id="lockValue">—</strong></div>
+            <div><span>CLOSED LOOP STEPS</span><strong id="closedValue">—</strong></div>
+            <div><span>TARGET PERIOD</span><strong><b id="periodValue">—</b> µs</strong></div>
+            <div><span>MEASURED PERIOD</span><strong><b id="measuredValue">—</b> µs</strong></div>
+            <div class="unavailable-current"><span>Id / กระแสแกน d</span><strong id="idCurrentValue">N/A</strong><small>ยังวัดไม่ได้ · ต้องสอบเทียบกระแสเฟสและทราบมุมโรเตอร์</small></div>
+            <div class="unavailable-current"><span>Iq / กระแสแกน q</span><strong id="iqCurrentValue">N/A</strong><small>ยังวัดไม่ได้ · ต้องสอบเทียบกระแสเฟสและทราบมุมโรเตอร์</small></div>
+          </div>
+          <div class="health-row"><div><span>MCU / TIMERS / IWDG</span><strong id="healthValue">—</strong></div><div><span>APP HEARTBEAT</span><strong id="heartbeatValue">—</strong></div></div>
+          <div class="not-available"><span>ยังไม่มีค่าที่สอบเทียบแล้ว</span><strong>แรงดันบัส · กระแส · RPM · อุณหภูมิ</strong></div>
+        </article>
+      </section>
+      </div>
+
+      <div class="page" id="page-control">
+      <div class="page-title"><span class="overline">MOTOR SETTINGS</span><h1>Control deck</h1><p>ตั้งค่าเฉพาะที่เฟิร์มแวร์รองรับ แล้วอ่านค่าที่บอร์ดรับจริง</p></div>
+      <section class="controls panel">
+        <div class="panel-head"><span>CONTROL DECK</span><small>บอร์ดเป็นผู้ตรวจขอบเขตค่าทุกคำสั่ง</small></div>
+        <div class="drive-actions"><div><span>START SEQUENCE</span><small>ARM → RUN เริ่ม ALIGN และ STARTUP</small><small id="armHelp">เชื่อมต่อบอร์ดเพื่อเปิดปุ่ม ARM</small></div><button id="armBtn" class="button" disabled>ARM</button><button id="runBtn" class="button primary" disabled>RUN</button><button id="stopBtn" class="button stop" disabled>STOP MOTOR</button></div>
+        <div class="motor-gauge-layout">
+        <div class="motor-gauge-panel">
+          <svg id="controlGauge" viewBox="0 0 440 390" role="slider" tabindex="0" aria-label="ปรับ Duty ลบหรือบวก ศูนย์คือหยุด กด SET DUTY เพื่อยืนยัน" aria-valuemin="-80" aria-valuemax="80" aria-valuenow="10">
+            <circle cx="220" cy="205" r="171" class="gauge-rim"/>
+            <g id="gaugeTicks"></g>
+            <path id="actualArc" class="actual-arc"/>
+            <g id="draftNeedle"><path d="M220 205 L216 59 L224 59 Z" class="draft-needle"/></g>
+            <g id="actualNeedle" hidden><path d="M220 205 L215 89 L225 89 Z" class="actual-needle"/></g>
+            <circle cx="220" cy="205" r="83" class="gauge-hub"/>
+            <text x="220" y="178" class="gauge-label">EFFECTIVE DUTY</text>
+            <text x="220" y="219" id="gaugeActual" class="gauge-number">—</text>
+            <text x="220" y="241" class="gauge-label">% จากบอร์ด</text>
+            <text x="220" y="307" class="gauge-label">ค่าที่กำลังปรับ</text>
+            <text x="220" y="338" id="gaugeDraft" class="gauge-draft">10%</text>
+          </svg>
+          <div class="gauge-key"><span class="draft-key">● ค่าที่ปรับ</span><span class="actual-key">● Effective จากบอร์ด</span></div>
+          <div id="gaugeApplied" class="gauge-applied">เป้าหมายที่บอร์ดรับ: —</div>
+          <div id="gaugeHint" class="gauge-hint">ลากรอบเกจหรือใช้ปุ่มลูกศร แล้วกด SET DUTY</div>
+        </div>
+        <div class="control-grid">
+          <div class="control-field"><label for="dutyInput">Signed duty target <em>−80 ถึง −5 / 0 STOP / +5 ถึง +80%</em></label><div class="input-row"><input id="dutyInput" type="number" min="-80" max="80" step="1" value="10"><button id="setDutyBtn" class="button" disabled>SET DUTY</button></div><input id="dutySlider" type="range" min="-80" max="80" step="1" value="10" aria-label="Signed duty target"></div>
+          <div class="control-field"><label for="responseSelect">Duty response <em>10–30 percentage points/s · ตั้งได้เมื่อหยุดเท่านั้น</em></label><div class="input-row"><select id="responseSelect"><option value="10">Gentle</option><option value="20" selected>Standard</option><option value="30">Faster</option></select><button id="setResponseBtn" class="button" disabled>SET RESPONSE</button></div></div>
+          <div class="control-field"><label for="periodInput">Startup period <em>600–12000 µs · หยุดอยู่เท่านั้น</em></label><div class="input-row"><input id="periodInput" type="number" min="600" max="12000" step="1" value="3000"><button id="setPeriodBtn" class="button" disabled>SET PERIOD</button></div></div>
+          <div class="control-field"><label for="startInput">Initial step period <em>12,000–30,000 µs · ลดลงเมื่อมอเตอร์รับการสตาร์ทที่เร็วขึ้นได้</em></label><div class="input-row"><input id="startInput" type="number" min="12000" max="30000" step="1000" value="20000"><button id="setStartBtn" class="button" disabled>SET INITIAL</button></div></div>
+          <div class="control-field"><label for="rampSelect">Startup acceleration <em>Faster ไล่สเต็ปเร็วขึ้น · ตั้งได้เมื่อหยุดเท่านั้น</em></label><div class="input-row"><select id="rampSelect"><option value="300">Gentle</option><option value="200" selected>Standard</option><option value="150">Faster</option></select><button id="setRampBtn" class="button" disabled>SET RAMP</button></div></div>
+          <div class="control-field"><label>Direction <em>เปลี่ยนได้เมื่อหยุดแล้ว</em></label><div class="input-row"><button id="forwardBtn" class="button" disabled>FORWARD</button><button id="reverseBtn" class="button" disabled>REVERSE</button></div></div>
+        </div>
+        </div>
+        <p class="safety-copy">STOP ส่งคำสั่งหยุดทันทีเมื่อ USB ยังเชื่อมต่ออยู่ หากสายหลุด เฟิร์มแวร์จะหยุดเมื่อ heartbeat หมดอายุ 1.5 วินาที พฤติกรรมหยุดจริงต้องยืนยันบนบอร์ดก่อนใช้งานกับมอเตอร์</p>
+      </section>
+      </div>
+
+      <div class="page" id="page-rt">
+      <div class="rt-title"><div><span class="overline">REALTIME DATA / USB CDC</span><h1>RT / Motor monitor</h1><p>กราฟจากค่าที่บอร์ดส่งจริง · หน้าจอวาดบนคอมพิวเตอร์</p></div><div class="rt-rate">PHASE 10 Hz · STATUS 2 Hz</div></div>
+      <div class="rt-grid">
+        <article class="rt-card panel"><div class="rt-head"><strong>01 / ADC สามเฟส</strong><small>ADC counts · ยังไม่สอบเทียบเป็นโวลต์</small></div><div class="rt-value"><b id="rtPhaseValue">—</b><span id="rtPhaseState">รอข้อมูล</span></div><div class="rt-plot"><canvas id="rtPhaseChart" aria-label="กราฟ ADC สามเฟส U V W"></canvas><div class="rt-empty" id="rtPhaseEmpty">รอข้อมูลจากบอร์ด</div></div><div class="rt-legend"><span style="--series:#35b7ff">U</span><span style="--series:#ff605b">V</span><span style="--series:#f1d84c">W</span></div></article>
+        <article class="rt-card panel"><div class="rt-head"><strong>02 / Duty</strong><small>% · Target / Effective / Pulse</small></div><div class="rt-value"><b id="rtDutyValue">—</b><span id="rtDutyState">รอข้อมูล</span></div><div class="rt-plot"><canvas id="rtDutyChart" aria-label="กราฟ Duty เป้าหมาย ค่าที่บอร์ดใช้ และพัลส์"></canvas><div class="rt-empty" id="rtDutyEmpty">รอข้อมูลจากบอร์ด</div></div><div class="rt-legend"><span style="--series:#ffac50">Target</span><span style="--series:#35b7ff">Effective</span><span style="--series:#a998f8">Pulse</span></div></article>
+        <article class="rt-card panel"><div class="rt-head"><strong>03 / คาบการสับเฟส</strong><small>µs · Target / Forced / Measured</small></div><div class="rt-value"><b id="rtPeriodValue">—</b><span id="rtPeriodState">รอข้อมูล</span></div><div class="rt-plot"><canvas id="rtPeriodChart" aria-label="กราฟคาบการสับเฟส"></canvas><div class="rt-empty" id="rtPeriodEmpty">รอข้อมูลจากบอร์ด</div></div><div class="rt-legend"><span style="--series:#ffac50">Target</span><span style="--series:#a998f8">Forced</span><span style="--series:#35b7ff">Measured</span></div></article>
+        <article class="rt-card panel"><div class="rt-head"><strong>04 / BEMF lock</strong><small>count · Lock / Required</small></div><div class="rt-value"><b id="rtBemfValue">—</b><span id="rtBemfState">รอข้อมูล</span></div><div class="rt-plot"><canvas id="rtBemfChart" aria-label="กราฟจำนวน BEMF lock และค่าที่ต้องการ"></canvas><div class="rt-empty" id="rtBemfEmpty">รอข้อมูลจากบอร์ด</div></div><div class="rt-legend"><span style="--series:#80d98a">Lock</span><span style="--series:#ffac50">Required</span></div></article>
+      </div><div class="rt-foot"><span id="rtDataState">ยังไม่มีข้อมูลสด</span><span>ช่วงเวลา 30 วินาที · ช่องว่างคือข้อมูลที่ขาดหรือใช้ไม่ได้</span></div>
+      </div>
+
+      <div class="page" id="page-phases">
+      <div class="page-title"><span class="overline">LIVE ACQUISITION</span><h1>Phase monitor</h1><p>ค่าดิบจาก ADC สามเฟส พร้อมเวลาและสถานะ sample สำหรับทำกราฟภายหลัง</p></div>
+      <section class="phase-section panel">
+        <div class="panel-head"><div><span>PHASE U / V / W</span><small>ค่า ADC ดิบที่บอร์ดส่งทุก 100 ms · ไม่ใช่แรงดันที่สอบเทียบ</small></div><div class="chart-actions"><button id="clearBtn" class="button">CLEAR</button><button id="csvBtn" class="button" disabled>EXPORT CSV</button></div></div>
+        <div class="phase-cards"><div class="phase u"><span>PHASE U</span><strong id="phaseU">—</strong><small>ADC counts</small></div><div class="phase v"><span>PHASE V</span><strong id="phaseV">—</strong><small>ADC counts</small></div><div class="phase w"><span>PHASE W</span><strong id="phaseW">—</strong><small>ADC counts</small></div><div class="phase-meta"><span>SAMPLE</span><strong id="phaseQuality">—</strong><small id="phaseAge">—</small></div></div>
+        <div class="phase-buffer"><div><span>ข้อมูลพร้อมสำหรับทำกราฟ</span><strong id="sampleCount">0 samples</strong></div><p>แต่ละชุดมี timestamp เดียวสำหรับ U/V/W พร้อม phase_valid และ phase_age_us เก็บในหน่วยความจำสูงสุด 1,800 ตัวอย่าง และส่งออก CSV ได้</p></div>
+      </section>
+      </div>
+
+      <div class="page" id="page-scope">
+      <div class="page-title"><span class="overline">REAL WAVEFORM CAPTURE</span><h1>Scope / BEMF</h1><p>จับข้อมูลดิบจาก ADC ขณะมอเตอร์หมุน แล้วให้คอมวาดรูปคลื่น</p></div>
+      <section class="scope-section panel"><div class="panel-head"><div><span>OSCILLOSCOPE / LIVE + SNAPSHOT</span><small>ข้อมูลดิบ U/V/W ระหว่าง CLOSED_LOOP · เฟรมสด 256 จุด หรือภาพจับ 512 จุดหลัง STOP</small></div><div class="scope-actions"><button id="scopeLiveBtn" class="button primary" disabled>START LIVE VIEW</button><button id="scopeCaptureBtn" class="button" disabled>CAPTURE WAVEFORM</button><button id="scopeStopViewBtn" class="button stop" disabled>STOP &amp; SHOW WAVEFORM</button><button id="scopeReadBtn" class="button" disabled>DOWNLOAD CAPTURE</button></div></div><div id="scopeState" class="scope-state">รอเชื่อมต่อบอร์ด · จับข้อมูลได้เมื่อมอเตอร์อยู่ใน CLOSED_LOOP</div><div class="scope-plots"><div><div class="scope-plot-title">PHASE TERMINAL / RAW ADC · U / V / W</div><canvas id="scopePhaseChart" aria-label="กราฟสโคปแรงดันปลายเฟส U V W"></canvas><div class="rt-legend"><span style="--series:#35b7ff">U</span><span style="--series:#ff605b">V</span><span style="--series:#f1d84c">W</span></div></div><div><div class="scope-plot-title">FLOATING-PHASE BEMF PROXY / ADC DIFFERENTIAL</div><canvas id="scopeBemfChart" aria-label="กราฟสโคป back EMF เฉพาะช่วงเฟสลอย"></canvas><div class="rt-legend"><span style="--series:#35b7ff">U floating</span><span style="--series:#ff605b">V floating</span><span style="--series:#f1d84c">W floating</span></div></div></div><p class="emf-note">กด START LIVE VIEW ระหว่าง CLOSED_LOOP เพื่อดูเฟรมที่บอร์ดวัดจริงต่อเนื่อง ปุ่ม PAUSE LIVE VIEW หยุดส่งกราฟเท่านั้น มอเตอร์ยังทำงาน · โหมด CAPTURE แยกต่างหาก: จับข้อมูล → STOP &amp; SHOW WAVEFORM · เฟรมสดอาจข้ามได้เมื่อ USB ส่งไม่ทัน ค่ายังไม่สอบเทียบเป็นโวลต์</p></section>
+      <section class="emf-section rt-card panel"><div class="rt-head"><strong>FLOATING-PHASE BEMF TREND / U · V · W</strong><small>3 × (เฟสลอย − ค่าเฉลี่ยสามเฟส) · ADC counts · 10 Hz</small></div><div class="rt-value"><b id="rtEmfValue">—</b><span id="rtEmfState">รอข้อมูล</span></div><div class="rt-plot"><canvas id="rtEmfChart" aria-label="กราฟ BEMF เฉพาะเฟสลอย U V W"></canvas><div class="rt-empty" id="rtEmfEmpty">รอข้อมูลจากบอร์ด</div></div><div class="rt-legend"><span style="--series:#35b7ff">U floating</span><span style="--series:#ff605b">V floating</span><span style="--series:#f1d84c">W floating</span></div><p class="emf-note">เส้น U/V/W แยกสีและเชื่อมตัวอย่างจริงของเฟสเดียวกัน · ข้อมูล 10 Hz ใช้ดูแนวโน้ม ไม่ใช่รูปคลื่น BEMF ความถี่สูงหรือค่าโวลต์ที่สอบเทียบ</p></section>
+      </div>
+
+      <div class="page" id="page-diagnostics">
+      <div class="page-title"><span class="overline">SYSTEM DIAGNOSTICS</span><h1>Fault &amp; serial</h1><p>ตรวจการเปลี่ยนสถานะและคำตอบจากบอร์ด</p></div>
+      <section class="bottom-grid">
+        <article class="panel event-panel"><div class="panel-head"><span>STATE &amp; FAULT LOG</span><small>ล่าสุด 8 รายการ</small></div><div id="eventList" class="event-list"><p>รอข้อมูลสถานะ</p></div></article>
+        <article class="panel console-panel"><div class="panel-head"><span>SERIAL CONSOLE</span><button id="clearLogBtn" class="text-button">CLEAR LOG</button></div><pre id="serialLog" class="serial-log"></pre><form id="consoleForm" class="console-entry"><label class="sr-only" for="consoleInput">พิมพ์คำสั่งบอร์ด</label><input id="consoleInput" type="text" maxlength="63" autocomplete="off" spellcheck="false" placeholder="พิมพ์คำสั่ง เช่น HELP หรือ STATUS" aria-label="คำสั่ง Serial"><button id="consoleSendBtn" class="button primary" type="submit" disabled>ส่งคำสั่ง</button></form><p class="console-help">คำสั่ง: HELP · HELLO · STATUS · DIAG · ARM · RUN · STOP · DUTY &lt;±5–80%&gt; · DIR FWD/REV · STARTPERIOD &lt;µs&gt; · RAMP &lt;ค่า&gt; · RESPONSE &lt;%/s&gt; · SCOPE …</p><p class="console-warning">ARM / RUN / DUTY สั่งการมอเตอร์โดยตรง บอร์ดเป็นผู้ตรวจสอบและปฏิเสธคำสั่งที่ไม่ผ่านเงื่อนไข</p><div class="console-actions"><button id="statusBtn" class="button" disabled>STATUS</button><button id="diagBtn" class="button" disabled>DIAG</button></div></article>
+      </section>
+      </div>
+    </main>
+    </div>
+    <footer>SAT motor pilot / F405 · LIVE USB SERIAL · CURRENT DATA UNVERIFIED / PROTECTION OFF</footer>
+  </div>
+  <script src="i18n.js?v=47"></script>
+  <script src="chart_scale.js?v=46"></script>
+  <script src="rt_charts.js?v=50"></script>
+  <script src="scope_plot.js?v=48"></script>
+  <script src="app.js?v=51"></script>
+</body>
+</html>

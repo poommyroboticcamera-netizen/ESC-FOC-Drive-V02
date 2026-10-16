@@ -14,6 +14,16 @@
 .vscode/
 .idea/
 
+# SAT motor pilot dependencies and generated packages
+/bldc_tuner_windows/__pycache__/
+/bldc_tuner_windows/.pyinstaller-work/
+/bldc_tuner_windows/dist/
+/bldc_tuner_windows/electron-shell/node_modules/
+
+# Local pre-release copies superseded by arduino_sixstep_releases/
+/arduino_stm32f405_bldc_v33/
+/MotorPilot_F405Dual/
+
 # Keep the original upstream Git metadata locally, but do not publish it.
 /vesc_firmware_custom/.git.local-backup/
 

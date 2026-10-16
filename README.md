@@ -18,7 +18,7 @@
 [![Repository size](https://img.shields.io/github/repo-size/poommyroboticcamera-netizen/ESC-FOC-Drive-V02?style=flat-square&color=0891B2)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02)
 [![Issues](https://img.shields.io/github/issues/poommyroboticcamera-netizen/ESC-FOC-Drive-V02?style=flat-square&color=7C3AED)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/issues)
 
-[Overview](#overview) · [Architecture](#system-architecture) · [Pin map](#hardware-map) · [Getting started](#getting-started) · [Validation](#validation-evidence) · [Hardware assets](hardware/README.md) · [Safety](#safety-and-project-status)
+[Overview](#overview) · [Arduino Releases](#arduino-six-step-and-tuning-app) · [Architecture](#system-architecture) · [Pin map](#hardware-map) · [Getting started](#getting-started) · [Validation](#validation-evidence) · [Hardware assets](hardware/README.md) · [Safety](#safety-and-project-status)
 
 </div>
 
@@ -28,10 +28,23 @@
 
 รีโปนี้รวม firmware, hardware configuration, schematic และชุดทดสอบสำหรับบอร์ด ESC V02 ที่ใช้ `STM32F405RGT6` ควบคุมอินเวอร์เตอร์สามเฟส การพัฒนาปัจจุบันเน้นการ bring-up ที่แรงดันและกระแสต่ำ การตรวจ gate waveform, current sensing และ sensorless BLDC six-step ก่อนขยายไปสู่การทดสอบ FOC บนฮาร์ดแวร์จริง
 
-Custom firmware อิงจาก [VESC firmware](https://github.com/vedderb/bldc) และเพิ่ม target `fw_bldc_lite_24`, pin mapping, software interlock, current protection และคำสั่งตรวจสถานะสำหรับบอร์ดนี้โดยเฉพาะ นอกจากนี้ยังมี Arduino sketches สองชุดสำหรับแยกตรวจ logic และ power stage ก่อนใช้ firmware หลัก
+Custom firmware อิงจาก [VESC firmware](https://github.com/vedderb/bldc) และเพิ่ม target `fw_bldc_lite_24`, pin mapping, software interlock, current protection และคำสั่งตรวจสถานะสำหรับบอร์ดนี้โดยเฉพาะ นอกจากนี้ยังมี Arduino six-step release set แยกเป็นรุ่นวัดกระแส, ไม่วัดกระแส และรุ่นโปรโตคอลสำหรับแอป SAT motor pilot
 
 > [!CAUTION]
 > นี่คือ engineering prototype ไม่ใช่ ESC สำหรับใช้งานจริงหรือระบบที่เกี่ยวข้องกับความปลอดภัย ภาคกำลังอาจสร้างกระแสสูง ความร้อน แรงดันย้อนกลับ และการหมุนโดยไม่คาดคิด Software trip และปุ่มหยุดไม่สามารถแทน hardware over-current shutdown, fuse, current-limited supply และเครื่องมือวัดแบบ isolated ได้
+
+## Arduino six-step and tuning app
+
+| รายการ | ตำแหน่ง | จุดประสงค์ |
+|:--|:--|:--|
+| Six-step วัดกระแส | [`arduino_sixstep_releases/stm32f405_sixstep_current`](arduino_sixstep_releases/stm32f405_sixstep_current) | Serial Monitor bring-up พร้อม INA181 diagnostic/software trip |
+| Six-step ไม่วัดกระแส | [`arduino_sixstep_releases/stm32f405_sixstep_no_current`](arduino_sixstep_releases/stm32f405_sixstep_no_current) | ตรวจ gate และ open-loop โดยไม่อ่าน PC0/PC1/PC2 |
+| Firmware สำหรับแอป | [`arduino_sixstep_releases/stm32f405_sixstep_app_v33`](arduino_sixstep_releases/stm32f405_sixstep_app_v33) | USB CDC `v33-proto1` พร้อม heartbeat และ telemetry |
+| SAT motor pilot | [`bldc_tuner_windows`](bldc_tuner_windows) | แอปจูน/ดูสถานะบน Windows สำหรับ firmware v33 เท่านั้น |
+
+เริ่มจาก [คู่มือเลือก firmware และวิธีใช้งาน](arduino_sixstep_releases/README_TH.md) ไฟล์ Windows portable และ ZIP ของแต่ละสเก็ตช์อยู่ในหน้า GitHub Releases เพื่อไม่เก็บ generated binaries ไว้ใน source tree
+
+ไลบรารี `SolidGeek/VescUart` ไม่ได้ใช้ในชุดนี้: VescUart ใช้ binary packet protocol ของ VESC แต่ SAT motor pilot ใช้ ASCII protocol เฉพาะของ `v33-proto1` ผ่าน USB CDC จึงไม่สามารถสลับใช้กันได้โดยตรง
 
 ## Engineering principles
 
@@ -61,8 +74,8 @@ Custom firmware อิงจาก [VESC firmware](https://github.com/vedderb/bl
 
 | Capability | Status | Notes |
 |:--|:--|:--|
-| Arduino gate-drive test | Available | Six-step open-loop for logic/scope checks |
-| STM32 Arduino bring-up | Available | 30 kHz test PWM, low-power bench use only |
+| Arduino gate-drive test | Available | Six-step open-loop แยก current/no-current |
+| STM32 Arduino app firmware | Available | `v33-proto1` สำหรับ SAT motor pilot, bench use only |
 | Custom VESC build | Build verified | Target `fw_bldc_lite_24` |
 | Sensorless BLDC six-step | Current bring-up target | Locked as the safe initial motor type |
 | FOC | Source base available, hardware validation pending | Do not run motor detection yet |

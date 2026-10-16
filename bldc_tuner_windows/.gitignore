@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.pyinstaller-work/
+dist/
+electron-shell/node_modules/
+electron-shell/dist/
+node_modules/
+dist/
+.pyinstaller-work/
+*.exe
+
+# Local drafts and generated desktop copies.
+/rt-draft.html
+/demo-analysis-preview.jpg
+/demo-motor-preview.jpg
+/Start BLDC Pilot.bat
+/electron-shell/copy-release.js

@@ -1,0 +1,32 @@
+{
+  "name": "sat-motor-pilot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SAT motor pilot desktop app for STM32F405 USB CDC",
+  "main": "main.js",
+  "scripts": {
+    "start": "node prepare-web.js && electron .",
+    "dist:win": "node prepare-web.js && electron-builder --win portable --x64"
+  },
+  "devDependencies": {
+    "electron": "^44.7.2",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.sat.motorpilot",
+    "productName": "SAT motor pilot",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "web/**/*"
+    ],
+    "win": {
+      "target": ["portable"],
+      "icon": "web/sat_motor_pilot.ico"
+    },
+    "artifactName": "SAT motor pilot.exe"
+  }
+}
