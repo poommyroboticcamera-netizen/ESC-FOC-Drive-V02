@@ -2,6 +2,8 @@
 
 ชุดนี้มีสเก็ตช์ STM32F405 สำหรับบอร์ด ESC V02 จำนวน 3 รุ่น เลือกแฟลชเพียงหนึ่งรุ่นให้ตรงกับงาน ห้ามรวมไฟล์ข้ามโฟลเดอร์
 
+ดาวน์โหลดแยก Release ตามรุ่น: [สำหรับแอป v33-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v33-proto1) · [วัดกระแส v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-current-v1) · [ไม่วัดกระแส v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-no-current-v1) แอป Windows อยู่ที่ [SAT motor pilot v1.0.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app)
+
 | รุ่น | ใช้เมื่อ | การวัดกระแส | ใช้กับ SAT motor pilot |
 |---|---|---|---|
 | `stm32f405_sixstep_current` | bring-up ผ่าน Serial Monitor และต้องการ software current trip | เปิด ใช้ PC0/PC1/PC2 | ไม่รองรับ |

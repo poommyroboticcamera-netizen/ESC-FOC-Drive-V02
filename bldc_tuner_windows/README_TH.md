@@ -7,7 +7,7 @@
 ## เปิดแอป
 
 1. คอมไพล์และแฟลช `../arduino_sixstep_releases/stm32f405_sixstep_app_v33/stm32f405_sixstep_app_v33.ino` ให้บอร์ด STM32F405 ที่ตรงกับฮาร์ดแวร์จริง
-2. จากซอร์สโค้ดให้ดับเบิลคลิก `Start SAT motor pilot.bat` (ต้องมี Python 3) ตัวเปิดจะใช้ Edge ก่อน Chrome และเปิด `http://127.0.0.1:8765/` หรือดาวน์โหลด `SAT-motor-pilot-1.0.0-win-x64.exe` จาก GitHub Releases ซึ่งไม่ต้องติดตั้ง Python
+2. จากซอร์สโค้ดให้ดับเบิลคลิก `Start SAT motor pilot.bat` (ต้องมี Python 3) ตัวเปิดจะใช้ Edge ก่อน Chrome และเปิด `http://127.0.0.1:8765/` หรือดาวน์โหลด `SAT-motor-pilot-1.0.0-win-x64.exe` จาก [Release ของแอป v1.0.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) ซึ่งไม่ต้องติดตั้ง Python (firmware ที่ใช้คู่กันอยู่ใน [Release v33-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v33-proto1))
 3. ต่อ USB แล้วกด **เชื่อมต่อบอร์ด** และเลือก COM port ของ STM32F405 ในหน้าต่างเบราว์เซอร์
 4. แอปตรวจ `HELLO`, protocol 1, `current_protection=OFF`, รับ `STATUS` และเปิด `STREAM ON 100` ก่อนเปิดปุ่มควบคุม
 

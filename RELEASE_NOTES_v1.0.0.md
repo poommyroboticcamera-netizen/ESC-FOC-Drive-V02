@@ -1,30 +1,11 @@
-# ESC V02 Arduino six-step + SAT motor pilot v1.0.0
+# SAT motor pilot v1.0.0 — Windows app
 
-วันที่เผยแพร่: 16 ตุลาคม 2026
+ไฟล์ใน Release นี้: `SAT-motor-pilot-1.0.0-win-x64.exe` (Windows x64 portable)
 
-## ใน release นี้
+SHA-256: `35af8c3fc4afd5b111897b246f90dde943830b38c81b85e6e61734e9b7fa18d8`
 
-- `stm32f405-sixstep-current-v1.zip` — open-loop six-step สำหรับ STM32F405 พร้อม INA181 zero calibration และ software current trip
-- `stm32f405-sixstep-no-current-v1.zip` — open-loop six-step ที่ไม่อ่าน PC0/PC1/PC2 และไม่มี current trip
-- `stm32f405-sixstep-app-v33-proto1.zip` — sensorless six-step พร้อม USB CDC protocol สำหรับ SAT motor pilot
-- `SAT-motor-pilot-1.0.0-win-x64.exe` — แอป Windows portable
-- `SHA256SUMS.txt` — checksum ของทุกไฟล์ด้านบน
+ใช้คู่กับ [Arduino six-step app firmware v33-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v33-proto1) เท่านั้น แอปตรวจ `fw=v33-proto1`, `protocol=1` และ `current_protection=OFF` ก่อนเปิดการควบคุม จึงไม่รองรับ firmware current/no-current ที่สั่งผ่าน Serial Monitor
 
-## ความเข้ากันได้
+วิธีติดตั้งและใช้งาน: [README หลัก](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02#เริ่มใช้งาน-sat-motor-pilot) และ [คู่มือแอป](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/blob/main/bldc_tuner_windows/README_TH.md)
 
-SAT motor pilot รองรับเฉพาะ `fw=v33-proto1`, `protocol=1`, `current_protection=OFF` แอปจะปฏิเสธ firmware current/no-current ที่เป็น Serial Monitor bring-up เพื่อป้องกันการใช้คำสั่งผิดโปรโตคอล
-
-ไม่ได้รวม `SolidGeek/VescUart` เนื่องจากเป็นไลบรารี binary VESC UART protocol ซึ่งไม่ตรงกับ ASCII USB CDC protocol ของ v33
-
-## การเปลี่ยนโครงสร้าง
-
-- รวม Arduino ที่เผยแพร่ไว้ใต้ `arduino_sixstep_releases/`
-- เก็บ sketch bring-up รุ่นเก่าทั้งหมดไว้ และเพิ่ม release set ที่ตั้งชื่อ profile ชัดเจนแยกต่างหาก
-- เก็บ web app เพียงชุดเดียวใต้ `bldc_tuner_windows/electron-shell/web/`
-- ไม่ commit `node_modules`, output ของ Electron/PyInstaller, executable หรือแอป MotorPilot คนละโปรโตคอล
-
-## คำเตือน
-
-ยังไม่มีรุ่นใดผ่านการรับรองกับภาคกำลังจริง รุ่น current ใช้ software trip ที่ตอบสนองช้า รุ่น no-current ไม่มี current feedback และรุ่น app ระบุ current data เป็น `UNVERIFIED` พร้อมปิด current protection ใช้แหล่งจ่ายจำกัดกระแส ฟิวส์ สวิตช์ตัด DC bus และเครื่องมือวัด isolated เสมอ
-
-เครื่องที่จัด release ไม่มี Arduino CLI จึงตรวจ source/protocol แบบ static แต่ยังไม่ได้ Verify ทั้งสาม sketch ด้วย toolchain STM32duino ในรอบนี้ ให้ Verify ใน Arduino IDE ก่อนแฟลช และเริ่มทดสอบโดยถอดมอเตอร์
+> ยังไม่ผ่านการทดสอบกับภาคกำลังจริง กระแสเป็นข้อมูล diagnostic ที่ยังไม่ยืนยัน และ current protection ของ firmware ที่รองรับแอปถูกปิด ใช้ฟิวส์ แหล่งจ่ายจำกัดกระแส และสวิตช์ตัด DC bus เสมอ
