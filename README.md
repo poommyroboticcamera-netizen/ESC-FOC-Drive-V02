@@ -10,7 +10,7 @@
 [![MCU](https://img.shields.io/badge/MCU-STM32F405RGT6-0B1220?style=for-the-badge&logo=stmicroelectronics&logoColor=38BDF8)](https://www.st.com/en/microcontrollers-microprocessors/stm32f405rg.html)
 [![Status](https://img.shields.io/badge/status-engineering_prototype-DC2626?style=for-the-badge)](#คำเตือนด้านความปลอดภัย)
 
-[ดาวน์โหลดแอป](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) · [เลือก Firmware](#firmware-ที่มีให้เลือก) · [วิธีใช้แอป](#เริ่มใช้งาน-sat-motor-pilot) · [Hardware](hardware/README.md) · [รุ่นเก่า](#รุ่นเก่าที่ยังเก็บไว้)
+[เปิดแอปบนเว็บ](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) · [ดาวน์โหลดแอป](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) · [เลือก Firmware](#firmware-ที่มีให้เลือก) · [วิธีใช้แอป](#เริ่มใช้งาน-sat-motor-pilot) · [Hardware](hardware/README.md) · [รุ่นเก่า](#รุ่นเก่าที่ยังเก็บไว้)
 
 </div>
 
@@ -53,6 +53,10 @@
 ไลบรารี [SolidGeek/VescUart](https://github.com/SolidGeek/VescUart) ไม่ได้ใช้กับ SAT motor pilot เพราะ VescUart ใช้ VESC binary packet protocol ส่วนแอปนี้ใช้ ASCII protocol ของ <code>v33-proto1</code> ผ่าน USB CDC
 
 ## เริ่มใช้งาน SAT motor pilot
+
+เปิด [SAT motor pilot บนเว็บ](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) ได้จาก Edge หรือ Chrome บนคอมพิวเตอร์ที่เสียบบอร์ดผ่าน USB โดยเว็บใช้ Web Serial บน HTTPS และขอสิทธิ์เลือกพอร์ตจากเบราว์เซอร์ ข้อมูล Serial อยู่ระหว่างเบราว์เซอร์กับบอร์ดในเครื่องผู้ใช้ ไม่ใช่การควบคุมมอเตอร์ผ่านเซิร์ฟเวอร์ เว็บบนมือถือหรือเบราว์เซอร์ที่ไม่รองรับ Web Serial ใช้เชื่อมบอร์ดไม่ได้
+
+ฟอนต์ไทยของเว็บตั้งค่า `Aktiv Grotesk Thai` เป็นลำดับแรก แต่ยังไม่ได้ฝังไฟล์ฟอนต์ที่มีลิขสิทธิ์ ผู้ใช้ที่ไม่มีฟอนต์นี้ในเครื่องจะเห็นฟอนต์ไทยสำรองจนกว่าจะติดตั้ง Adobe Fonts Web Project/Kit หรือได้รับไฟล์พร้อมสิทธิ์ใช้บนเว็บ
 
 ### 1. แฟลช firmware ที่ตรงกับแอป
 

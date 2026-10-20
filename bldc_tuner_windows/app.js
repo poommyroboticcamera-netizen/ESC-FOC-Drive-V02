@@ -193,6 +193,10 @@
   }
 
   async function connect() {
+    if (!window.isSecureContext) {
+      note(L('USB Serial requires a secure HTTPS page or localhost. Open the published site directly in Edge or Chrome.', 'USB Serial ต้องเปิดจากหน้า HTTPS หรือ localhost ที่ปลอดภัย กรุณาเปิดเว็บที่เผยแพร่โดยตรงใน Edge หรือ Chrome'), 'error');
+      return;
+    }
     if (!('serial' in navigator)) {
       note(L('This browser does not support Web Serial. Open the app in Microsoft Edge or Google Chrome.','เบราว์เซอร์นี้ไม่รองรับ Web Serial กรุณาเปิดแอปด้วย Microsoft Edge หรือ Google Chrome'), 'error');
       return;
