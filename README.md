@@ -4,115 +4,115 @@
 
 # ESC-FOC-Drive-V02
 
-**STM32F405 three-phase BLDC/FOC engineering platform with Arduino six-step and SAT motor pilot app for Windows**
+**STM32F405 three-phase BLDC/FOC engineering platform พร้อม Arduino six-step และแอป SAT motor pilot สำหรับ Windows**
 
 [![Release](https://img.shields.io/badge/release-v1.0.0--app-2563EB?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app)
 [![MCU](https://img.shields.io/badge/MCU-STM32F405RGT6-0B1220?style=for-the-badge&logo=stmicroelectronics&logoColor=38BDF8)](https://www.st.com/en/microcontrollers-microprocessors/stm32f405rg.html)
-[![Status](https://img.shields.io/badge/status-engineering_prototype-DC2626?style=for-the-badge)](#safety-warning)
-[![English selected](https://img.shields.io/badge/English-selected-2563EB?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02)
-[![Switch to Thai](https://img.shields.io/badge/%E0%B9%84%E0%B8%97%E0%B8%A2-switch-475569?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/tree/readme-th)
+[![Status](https://img.shields.io/badge/status-engineering_prototype-DC2626?style=for-the-badge)](#คำเตือนด้านความปลอดภัย)
+[![Switch to English](https://img.shields.io/badge/English-switch-475569?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02)
+[![Thai selected](https://img.shields.io/badge/%E0%B9%84%E0%B8%97%E0%B8%A2-selected-2563EB?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/tree/readme-th)
 
-[Open the web app](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) · [Download the app](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) · [Select Firmware](#available-firmware) · [How to use the app](#start-using-sat-motor-pilot) · [Hardware](hardware/README.md) · [old model](#the-old-version-is-still-kept)
+[เปิดแอปบนเว็บ](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) · [ดาวน์โหลดแอป](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) · [เลือก Firmware](#firmware-ที่มีให้เลือก) · [วิธีใช้แอป](#เริ่มใช้งาน-sat-motor-pilot) · [Hardware](hardware/README.md) · [รุ่นเก่า](#รุ่นเก่าที่ยังเก็บไว้)
 
 </div>
 
-The SAT motor pilot web app starts in English. Use the language button beside the connection controls to switch to Thai.
+แอป SAT motor pilot เปิดเป็นภาษาอังกฤษครั้งแรก ใช้ปุ่มภาษาข้างส่วนเชื่อมต่อเพื่อเปลี่ยนเป็นภาษาไทย
 
 ---
 
-## Recommended version: v1.0.0-app
+## รุ่นแนะนำ: v1.0.0-app
 
-This version adds **SAT motor pilot** for viewing status. Initial tuning, six-step control and phase telemetry recording via USB CDC with firmware <code>v33-proto1</code> that are specifically used together
+รุ่นนี้เพิ่ม **SAT motor pilot** สำหรับดูสถานะ จูนค่าเริ่มต้น ควบคุม six-step และบันทึก phase telemetry ผ่าน USB CDC พร้อม firmware <code>v33-proto1</code> ที่ใช้คู่กันโดยเฉพาะ
 
-Download separated by model from [GitHub Releases](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases) Where **One Release contains files of that release only**:
+ดาวน์โหลดแยกตามรุ่นจาก [GitHub Releases](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases) โดย **หนึ่ง Release มีไฟล์ของรุ่นนั้นเท่านั้น**:
 
-| Release / Version | download file | used for |
+| Release / เวอร์ชัน | ไฟล์ดาวน์โหลด | ใช้สำหรับ |
 |:--|:--|:--|
-| [SAT motor pilot v1.0.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) | <code>SAT-motor-pilot-1.0.0-win-x64.exe</code> | Portable Windows x64 apps |
-| [Arduino six-step app v33-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v33-proto1) | <code>stm32f405-sixstep-app-v33-proto1.zip</code> | Firmware used with the app only |
-| [Arduino six-step current v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-current-v1) | <code>stm32f405-sixstep-current-v1.zip</code> | Six-step via Serial Monitor, current measurement model; **Not used with apps** |
-| [Arduino six-step no-current v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-no-current-v1) | <code>stm32f405-sixstep-no-current-v1.zip</code> | Six-step via Serial Monitor without measuring current; **Not used with apps** |
+| [SAT motor pilot v1.0.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) | <code>SAT-motor-pilot-1.0.0-win-x64.exe</code> | แอป Windows x64 แบบ portable |
+| [Arduino six-step app v33-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v33-proto1) | <code>stm32f405-sixstep-app-v33-proto1.zip</code> | Firmware ที่ใช้คู่กับแอปเท่านั้น |
+| [Arduino six-step current v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-current-v1) | <code>stm32f405-sixstep-current-v1.zip</code> | Six-step ผ่าน Serial Monitor แบบวัดกระแส; **ไม่ใช้กับแอป** |
+| [Arduino six-step no-current v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-no-current-v1) | <code>stm32f405-sixstep-no-current-v1.zip</code> | Six-step ผ่าน Serial Monitor แบบไม่วัดกระแส; **ไม่ใช้กับแอป** |
 
-The SHA-256 value of the file is in each release's description. Download only the required release and do not flash multiple versions of firmware together.
+ค่า SHA-256 ของไฟล์อยู่ในคำอธิบาย Release แต่ละรายการ ดาวน์โหลดเฉพาะรุ่นที่ต้องการและอย่าแฟลช firmware หลายรุ่นรวมกัน
 
 > [!IMPORTANT]
-> SAT motor pilot supported only <code>fw=v33-proto1</code>, <code>protocol=1</code> and <code>current_protection=OFF</code> The app rejects different firmware versions to avoid sending commands against the protocol.
+> SAT motor pilot รองรับเฉพาะ <code>fw=v33-proto1</code>, <code>protocol=1</code> และ <code>current_protection=OFF</code> แอปจะปฏิเสธ firmware คนละรุ่นเพื่อไม่ให้ส่งคำสั่งผิดโปรโตคอล
 
-## Available firmware
+## Firmware ที่มีให้เลือก
 
-| Profile | Source | Current sense | How to control | status |
+| Profile | Source | Current sense | วิธีควบคุม | สถานะ |
 |:--|:--|:--|:--|:--|
-| App v33 | [stm32f405_sixstep_app_v33](arduino_sixstep_releases/stm32f405_sixstep_app_v33) | Diagnostic only, Unit A not yet confirmed. | SAT motor pilot | Recommended version for the app |
+| App v33 | [stm32f405_sixstep_app_v33](arduino_sixstep_releases/stm32f405_sixstep_app_v33) | Diagnostic เท่านั้น, ยังไม่ยืนยันหน่วย A | SAT motor pilot | รุ่นแนะนำสำหรับแอป |
 | Current | [stm32f405_sixstep_current](arduino_sixstep_releases/stm32f405_sixstep_current) | INA181 U/V/W + software trip | Serial Monitor | Bench bring-up |
-| No current | [stm32f405_sixstep_no_current](arduino_sixstep_releases/stm32f405_sixstep_no_current) | Close Do not read PC0/PC1/PC2 | Serial Monitor | Logic/gate test |
-| Custom VESC | [vesc_firmware_custom](vesc_firmware_custom) | Board-specific current path | VESC Tool / terminal | Separate development work |
+| No current | [stm32f405_sixstep_no_current](arduino_sixstep_releases/stm32f405_sixstep_no_current) | ปิด ไม่อ่าน PC0/PC1/PC2 | Serial Monitor | Logic/gate test |
+| Custom VESC | [vesc_firmware_custom](vesc_firmware_custom) | Board-specific current path | VESC Tool / terminal | งานพัฒนาแยก |
 
-Read details on selecting and flashing at [Arduino six-step release guide](arduino_sixstep_releases/README_TH.md)
+อ่านรายละเอียดการเลือกและแฟลชที่ [Arduino six-step release guide](arduino_sixstep_releases/README_TH.md)
 
-- **App v33** includes heartbeat 1500 ms, watchdog, telemetry, phase stream and scope capture.
-- **Current** has zero calibration and software trip, but not hardware short-circuit protection.
-- **No current** No current feedback or software trip. Current must be limited with an external supply.
-- **Custom VESC** is a different codebase. Do not flash and switch without checking the target and manual.
+- **App v33** มี heartbeat 1500 ms, watchdog, telemetry, phase stream และ scope capture
+- **Current** มี zero calibration และ software trip แต่ไม่ใช่ hardware short-circuit protection
+- **No current** ไม่มี current feedback หรือ software trip ต้องจำกัดกระแสด้วยแหล่งจ่ายภายนอก
+- **Custom VESC** เป็น codebase คนละสาย ห้ามแฟลชสลับโดยไม่ตรวจ target และคู่มือ
 
-Library [SolidGeek/VescUart](https://github.com/SolidGeek/VescUart) Not used with SAT motor pilot because VescUart uses VESC binary packet protocol. This app uses ASCII protocol of <code>v33-proto1</code> Via USB CDC
+ไลบรารี [SolidGeek/VescUart](https://github.com/SolidGeek/VescUart) ไม่ได้ใช้กับ SAT motor pilot เพราะ VescUart ใช้ VESC binary packet protocol ส่วนแอปนี้ใช้ ASCII protocol ของ <code>v33-proto1</code> ผ่าน USB CDC
 
-## Start using SAT motor pilot
+## เริ่มใช้งาน SAT motor pilot
 
-open [SAT motor pilot on the web](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) You can do this from Edge or Chrome on the computer where the board is plugged in via USB. The website uses Web Serial over HTTPS and requests permission to select the port from the browser. Serial data is between the browser and the board on the user's machine. It is not a server controlled motor. Mobile websites or browsers that do not support Web Serial cannot be used to connect to the board.
+เปิด [SAT motor pilot บนเว็บ](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) ได้จาก Edge หรือ Chrome บนคอมพิวเตอร์ที่เสียบบอร์ดผ่าน USB โดยเว็บใช้ Web Serial บน HTTPS และขอสิทธิ์เลือกพอร์ตจากเบราว์เซอร์ ข้อมูล Serial อยู่ระหว่างเบราว์เซอร์กับบอร์ดในเครื่องผู้ใช้ ไม่ใช่การควบคุมมอเตอร์ผ่านเซิร์ฟเวอร์ เว็บบนมือถือหรือเบราว์เซอร์ที่ไม่รองรับ Web Serial ใช้เชื่อมบอร์ดไม่ได้
 
-Thai font used by the website `Noto Sans Thai` From Google Fonts, which is an open source font with a smooth shape similar to Aktiv Grotesk Thai. If the font cannot be loaded, a Thai font will be used as an alternative.
+ฟอนต์ไทยของเว็บใช้ `Noto Sans Thai` จาก Google Fonts ซึ่งเป็นฟอนต์โอเพนซอร์สทรงเรียบใกล้เคียง Aktiv Grotesk Thai หากโหลดฟอนต์ไม่ได้จะใช้ฟอนต์ไทยสำรอง
 
-### 1. Flash the firmware that matches the app.
+### 1. แฟลช firmware ที่ตรงกับแอป
 
-1. download <code>stm32f405-sixstep-app-v33-proto1.zip</code> Then extract the file
-2. open <code>stm32f405_sixstep_app_v33.ino</code> With Arduino IDE 2
-3. Install the package **STM32 MCU based boards** of STMicroelectronics.
-4. Select Board <code>Generic STM32F4 series</code>, part <code>Generic F405RGTx</code>
-5. Select USB <code>CDC (generic Serial supersede U(S)ART)</code> and Low/Full Speed
-6. choose <code>STM32CubeProgrammer (SWD)</code> When using ST-LINK
-7. Press **Verify** before uploading without connecting the motor and not paying the DC bus.
+1. ดาวน์โหลด <code>stm32f405-sixstep-app-v33-proto1.zip</code> แล้วแตกไฟล์
+2. เปิด <code>stm32f405_sixstep_app_v33.ino</code> ด้วย Arduino IDE 2
+3. ติดตั้งแพ็กเกจ **STM32 MCU based boards** ของ STMicroelectronics
+4. เลือก Board <code>Generic STM32F4 series</code>, part <code>Generic F405RGTx</code>
+5. เลือก USB <code>CDC (generic Serial supersede U(S)ART)</code> และ Low/Full Speed
+6. เลือก <code>STM32CubeProgrammer (SWD)</code> เมื่อใช้ ST-LINK
+7. กด **Verify** ก่อน Upload โดยยังไม่ต่อมอเตอร์และไม่จ่าย DC bus
 
-### 2. Open the app
+### 2. เปิดแอป
 
-1. download <code>SAT-motor-pilot-1.0.0-win-x64.exe</code>
-2. Open the app file as portable, no need to install Python.
-3. Connect STM32F405 with USB data cable.
-4. Press refresh, select the COM of the board, then press **Connect board**
-5. The app detects HELLO, starts sending HEARTBEAT, reads STATUS and automatically turns on phase stream.
+1. ดาวน์โหลด <code>SAT-motor-pilot-1.0.0-win-x64.exe</code>
+2. เปิดไฟล์ แอปเป็น portable ไม่ต้องติดตั้ง Python
+3. ต่อ STM32F405 ด้วยสาย USB data
+4. กดรีเฟรช เลือก COM ของบอร์ด แล้วกด **Connect board**
+5. แอปตรวจ HELLO, เริ่มส่ง HEARTBEAT, อ่าน STATUS และเปิด phase stream อัตโนมัติ
 
-If you cannot open COM, close the Arduino Serial Monitor, Arduino IDE, browser tab, or SAT motor pilot in another window that is using the same port and check the COM number in Windows Device Manager.
+ถ้าเปิด COM ไม่ได้ ให้ปิด Arduino Serial Monitor, Arduino IDE, browser tab หรือ SAT motor pilot หน้าต่างอื่นที่กำลังใช้พอร์ตเดียวกัน แล้วตรวจ COM number ใน Windows Device Manager
 
-### 3. Test the motor
+### 3. ทดสอบมอเตอร์
 
-1. Use a low voltage source and low current limit.
-2. Prepare an accessible DC bus cutoff switch.
-3. Connect the app and check that the status is <code>DISARMED</code>
-4. Press ARM and set duty/startup profile to low.
-5. Press RUN and monitor state, fault, duty, phase ADC and BEMF lock.
-6. Press STOP immediately when the motor vibrates, freezes, overheats, or the current increases abnormally.
+1. ใช้แหล่งจ่ายแรงดันต่ำและ current limit ต่ำ
+2. เตรียมสวิตช์ตัด DC bus ที่เอื้อมถึงได้
+3. เชื่อมต่อแอปและตรวจว่าสถานะเป็น <code>DISARMED</code>
+4. กด ARM แล้วตั้ง duty/startup profile ต่ำ
+5. กด RUN และเฝ้าดู state, fault, duty, phase ADC และ BEMF lock
+6. กด STOP ทันทีเมื่อมอเตอร์สั่น ค้าง ร้อน หรือกระแสเพิ่มผิดปกติ
 
-Phase U/V/W values ​​are raw ADC counts, not calibrated voltages. Unverified current, RPM, bus voltage, and temperature values ​​are displayed as N/A. The app does not generate simulated values.
+ค่า Phase U/V/W เป็น raw ADC counts ไม่ใช่แรงดันที่สอบเทียบแล้ว ค่า current, RPM, bus voltage และ temperature ที่ยังไม่ยืนยันจะแสดงเป็น N/A แอปไม่สร้างค่าจำลอง
 
-## App functions
+## ฟังก์ชันของแอป
 
-- ARM / RUN / STOP and signed duty
+- ARM / RUN / STOP และ signed duty
 - Direction, initial startup period, acceleration ramp และ duty response
 - State, fault, commutation timing, BEMF lock และ heartbeat
-- Phase U/V/W live trend max approximately 10 samples/s
-- Scope snapshot up to 512 PWM-ON samples and live short captures
-- Export CSV from actual received data
-- Serial console for diagnostic
+- Phase U/V/W live trend สูงสุดประมาณ 10 samples/s
+- Scope snapshot สูงสุด 512 PWM-ON samples และ live short captures
+- Export CSV จากข้อมูลที่รับจริง
+- Serial console สำหรับ diagnostic
 - English/Thai UI
 
-The source is in [bldc_tuner_windows](bldc_tuner_windows) If you want to run it through your browser, open it. <code>Start SAT motor pilot.bat</code> with Python 3 or build Electron included <code>npm install</code> and <code>npm run dist:win</code> in <code>bldc_tuner_windows/electron-shell</code>
+ซอร์สอยู่ใน [bldc_tuner_windows](bldc_tuner_windows) หากต้องการรันผ่าน browser ให้เปิด <code>Start SAT motor pilot.bat</code> โดยมี Python 3 หรือ build Electron ด้วย <code>npm install</code> และ <code>npm run dist:win</code> ใน <code>bldc_tuner_windows/electron-shell</code>
 
 ## Hardware overview
 
-| list | details |
+| รายการ | รายละเอียด |
 |:--|:--|
 | MCU | STM32F405RGT6, ARM Cortex-M4F |
 | Power stage | Three-phase, six MOSFET bridge |
-| Gate driver | EG3112D, 3 channels |
+| Gate driver | EG3112D จำนวน 3 ช่อง |
 | Current sense | INA181A1 gain 20 V/V, shunt 1 mΩ x3 |
 | Interfaces | USB CDC, CAN, PPM, SWD |
 | Main bring-up target | 24 V class, low-power controlled bench |
@@ -130,28 +130,28 @@ The source is in [bldc_tuner_windows](bldc_tuner_windows) If you want to run it 
 | CAN1 RX / TX | PB8 / PB9 |
 | SWDIO / SWCLK | PA13 / PA14 |
 
-Production files and circuit drawings:
+ไฟล์ผลิตและแบบวงจร:
 
 - [Hardware guide](hardware/README.md)
-- [Latest Schematic](hardware/SCH_drive_2026-09-22.pdf)
-- [Latest PCB PDF](hardware/PCB_V02_2026-09-22.pdf)
+- [Schematic ล่าสุด](hardware/SCH_drive_2026-09-22.pdf)
+- [PCB PDF ล่าสุด](hardware/PCB_V02_2026-09-22.pdf)
 - [BOM](hardware/BOM_BLDCv02.xlsx)
 - [Pick-and-Place](hardware/PickAndPlace_BLDCV02.xlsx)
 - [Gerber](hardware/Gerber_BLDCV02.zip)
 
-## The old version is still kept.
+## รุ่นเก่าที่ยังเก็บไว้
 
-The new version does not overwrite or delete the old source:
+รุ่นใหม่ไม่ทับหรือลบ source เดิม:
 
-| original folder | content |
+| โฟลเดอร์เดิม | เนื้อหา |
 |:--|:--|
-| [arduino_stm32f405_bldc_test](arduino_stm32f405_bldc_test) | STM32F405 open-loop bring-up original model |
-| [arduino_eg2132_bldc_test](arduino_eg2132_bldc_test) | Arduino Uno/Nano gate-input test original version |
-| [vesc_firmware_custom](vesc_firmware_custom) | Custom VESC source, reports and original development work |
+| [arduino_stm32f405_bldc_test](arduino_stm32f405_bldc_test) | STM32F405 open-loop bring-up รุ่นเดิม |
+| [arduino_eg2132_bldc_test](arduino_eg2132_bldc_test) | Arduino Uno/Nano gate-input test รุ่นเดิม |
+| [vesc_firmware_custom](vesc_firmware_custom) | Custom VESC source, reports และงานพัฒนาเดิม |
 
-If you must rollback, checkout the desired commit/tag or use the source in the original folder. Do not assume that the protocols and commands of each version are compatible.
+หากต้องย้อนกลับ ให้ checkout commit/tag ที่ต้องการหรือใช้ source ในโฟลเดอร์เดิม ห้ามสมมติว่า protocol และคำสั่งของแต่ละรุ่นเข้ากันได้
 
-## Repository structure
+## โครงสร้าง Repository
 
     arduino_sixstep_releases/         Current / no-current / app-v33 profiles
     bldc_tuner_windows/               SAT motor pilot source
@@ -161,32 +161,32 @@ If you must rollback, checkout the desired commit/tag or use the source in the o
     hardware/                         Schematic, PCB, BOM, PnP, Gerber
     docs/assets/                      README images
 
-Generated executables, Electron dependencies, build output and temporary files are not committed; Download binary from GitHub Releases
+Generated executables, Electron dependencies, build output และ temporary files ไม่ถูก commit; ดาวน์โหลด binary จาก GitHub Releases
 
-## Verification status
+## สถานะการตรวจสอบ
 
-| list | result |
+| รายการ | ผล |
 |:--|:--|
-| SAT motor pilot JavaScript syntax | pass |
-| Python localhost launcher | Passed, HTTP 200 |
-| Electron Windows x64 portable build | pass |
-| App ↔ firmware handshake fields | Checked for consistency. |
-| Release ZIP structure / SHA-256 | pass |
-| Arduino v1 profiles compile in this release. | You must press Verify in the Arduino IDE because the build machine does not have the Arduino CLI. |
-| Tested with real boards and motors. | Still need to process |
+| SAT motor pilot JavaScript syntax | ผ่าน |
+| Python localhost launcher | ผ่าน, HTTP 200 |
+| Electron Windows x64 portable build | ผ่าน |
+| App ↔ firmware handshake fields | ตรวจความสอดคล้องแล้ว |
+| Release ZIP structure / SHA-256 | ผ่าน |
+| Arduino v1 profiles compile ในรอบ release นี้ | ต้องกด Verify ใน Arduino IDE เนื่องจากเครื่อง build ไม่มี Arduino CLI |
+| ทดสอบกับบอร์ดและมอเตอร์จริง | ยังต้องดำเนินการ |
 
-Compiling and launching the app does not verify ADC timing, dead time, gate waveform, current accuracy, or fault response on the actual power sector.
+การ compile และเปิดแอปได้ไม่ยืนยัน ADC timing, dead time, gate waveform, current accuracy หรือ fault response บนภาคกำลังจริง
 
-## Safety warning
+## คำเตือนด้านความปลอดภัย
 
 > [!CAUTION]
-> This project is an engineering prototype, not an ESC production or safety-rated system. The power section can generate high current, heat, and reverse voltage. and unexpected rotation
+> โครงการนี้เป็น engineering prototype ไม่ใช่ ESC production หรือระบบ safety-rated ภาคกำลังสามารถสร้างกระแสสูง ความร้อน แรงดันย้อนกลับ และการหมุนโดยไม่คาดคิด
 
-- Uses fuses, current limiting supplies and DC bus cut-off switches.
-- Check gate input and gate waveform without connecting the motor first.
-- Use a differential/isolated probe when measuring high-side. Do not connect the oscilloscope ground clip to a phase node or HO.
-- Software trip, watchdog, heartbeat, and STOP button do not replace hardware over-current shutdown.
-- Do not increase duty to cause the motor to stall or vibrate.
-- Not yet approved for use in automotive, medical, human-carrying or safety-critical systems.
+- ใช้ฟิวส์ แหล่งจ่ายจำกัดกระแส และสวิตช์ตัด DC bus
+- ตรวจ gate input และ gate waveform โดยไม่ต่อมอเตอร์ก่อน
+- ใช้ differential/isolated probe เมื่อวัด high-side ห้ามต่อ oscilloscope ground clip เข้ากับ phase node หรือ HO
+- Software trip, watchdog, heartbeat และปุ่ม STOP ไม่ทดแทน hardware over-current shutdown
+- ห้ามเพิ่ม duty เพื่อฝืนมอเตอร์ที่ stall หรือสั่น
+- ยังไม่อนุมัติให้ใช้กับ automotive, medical, human-carrying หรือระบบ safety-critical
 
-There is no repository-wide license for project-specific files. Making them public does not automatically grant license or distribution. VESC and third-party components are licensed by the source.
+ไม่มี repository-wide license สำหรับไฟล์เฉพาะโครงการ การเปิดเป็น public ไม่ได้ให้สิทธิ์ใช้งานหรือแจกจ่ายโดยอัตโนมัติ ส่วน VESC และ third-party components อยู่ภายใต้ license ของต้นทาง
