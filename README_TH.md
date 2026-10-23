@@ -9,8 +9,8 @@
 [![Release](https://img.shields.io/badge/release-v1.0.0--app-2563EB?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app)
 [![MCU](https://img.shields.io/badge/MCU-STM32F405RGT6-0B1220?style=for-the-badge&logo=stmicroelectronics&logoColor=38BDF8)](https://www.st.com/en/microcontrollers-microprocessors/stm32f405rg.html)
 [![Status](https://img.shields.io/badge/status-engineering_prototype-DC2626?style=for-the-badge)](#คำเตือนด้านความปลอดภัย)
-[![Switch to English](https://img.shields.io/badge/English-switch-475569?style=for-the-badge)](README.md)
-[![Thai selected](https://img.shields.io/badge/%E0%B9%84%E0%B8%97%E0%B8%A2-selected-2563EB?style=for-the-badge)](README_TH.md)
+[![Switch to English](https://img.shields.io/badge/English-switch-475569?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02)
+[![Thai selected](https://img.shields.io/badge/%E0%B9%84%E0%B8%97%E0%B8%A2-selected-2563EB?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/tree/readme-th)
 
 [เปิดแอปบนเว็บ](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) · [ดาวน์โหลดแอป](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) · [เลือก Firmware](#firmware-ที่มีให้เลือก) · [วิธีใช้แอป](#เริ่มใช้งาน-sat-motor-pilot) · [Hardware](hardware/README.md) · [รุ่นเก่า](#รุ่นเก่าที่ยังเก็บไว้)
 

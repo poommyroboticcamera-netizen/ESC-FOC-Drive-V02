@@ -9,8 +9,8 @@
 [![Release](https://img.shields.io/badge/release-v1.0.0--app-2563EB?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app)
 [![MCU](https://img.shields.io/badge/MCU-STM32F405RGT6-0B1220?style=for-the-badge&logo=stmicroelectronics&logoColor=38BDF8)](https://www.st.com/en/microcontrollers-microprocessors/stm32f405rg.html)
 [![Status](https://img.shields.io/badge/status-engineering_prototype-DC2626?style=for-the-badge)](#safety-warning)
-[![English selected](https://img.shields.io/badge/English-selected-2563EB?style=for-the-badge)](README.md)
-[![Switch to Thai](https://img.shields.io/badge/%E0%B9%84%E0%B8%97%E0%B8%A2-switch-475569?style=for-the-badge)](README_TH.md)
+[![English selected](https://img.shields.io/badge/English-selected-2563EB?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02)
+[![Switch to Thai](https://img.shields.io/badge/%E0%B9%84%E0%B8%97%E0%B8%A2-switch-475569?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/tree/readme-th)
 
 [Open the web app](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) · [Download the app](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) · [Select Firmware](#available-firmware) · [How to use the app](#start-using-sat-motor-pilot) · [Hardware](hardware/README.md) · [old model](#the-old-version-is-still-kept)
 
