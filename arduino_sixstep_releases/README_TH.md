@@ -4,6 +4,8 @@
 
 ดาวน์โหลดแยก Release ตามรุ่น: [สำหรับแอป v33-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v33-proto1) · [วัดกระแส v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-current-v1) · [ไม่วัดกระแส v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-no-current-v1) แอป Windows อยู่ที่ [SAT motor pilot v1.0.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app)
 
+แต่ละ Firmware Release มีไฟล์ `.elf` สำหรับแฟลชผ่าน ST-LINK/SWD และ ZIP ซอร์สโค้ด อ่าน [วิธีเลือกไฟล์และแฟลช ELF อย่างปลอดภัย](ELF_FLASH_GUIDE_TH.md) ก่อนใช้งาน
+
 | รุ่น | ใช้เมื่อ | การวัดกระแส | ใช้กับ SAT motor pilot |
 |---|---|---|---|
 | `stm32f405_sixstep_current` | bring-up ผ่าน Serial Monitor และต้องการ software current trip | เปิด ใช้ PC0/PC1/PC2 | ไม่รองรับ |
@@ -60,5 +62,5 @@
 - รุ่น current/no-current ใช้ TIM1 PWM 30 kHz, IWDG ประมาณ 1 วินาที และเก็บ state ในตัวแปรคงที่ ไม่มี dynamic allocation; หาก IWDG เริ่มไม่ได้ firmware จะไม่ยอม arm
 - รุ่น app ใช้ TIM1 PWM 20 kHz, watchdog ประมาณ 1 วินาที, heartbeat timeout 1500 ms และบัฟเฟอร์ Scope คงที่ 512 ตัวอย่าง (`ScopeSample` 12 ไบต์โดย alignment ปัจจุบัน หรือประมาณ 6 KiB RAM)
 - แอปเก็บกราฟย้อนหลังบนคอมพิวเตอร์ ไม่เพิ่ม RAM history บนบอร์ดนอกเหนือจาก scope buffer
-- ยังไม่มีผล flash/RAM จาก Arduino build ในเครื่องนี้ เพราะไม่มี Arduino CLI ให้ใช้ ตัวเลขจริงต้องอ่านจากผล Verify ของ Arduino IDE/STM32duino รุ่นที่ใช้ และบันทึกก่อนอนุมัติให้แฟลชฮาร์ดแวร์
+- ผล Verify ด้วย STM32duino 3.0.0 ของทั้งสามรุ่นและขนาด Flash/RAM อยู่ใน [คู่มือ ELF](ELF_FLASH_GUIDE_TH.md) แต่ยังไม่ได้แฟลชหรือวัด timing บนบอร์ดจริง
 - ตรวจ jitter, ADC sample point, gate dead time และ timeout ด้วย oscilloscope/logic analyzer บนบอร์ดจริง การ compile อย่างเดียวไม่ยืนยัน timing ของภาคกำลัง

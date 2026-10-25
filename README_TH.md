@@ -24,16 +24,18 @@
 
 รุ่นนี้เพิ่ม **SAT motor pilot** สำหรับดูสถานะ จูนค่าเริ่มต้น ควบคุม six-step และบันทึก phase telemetry ผ่าน USB CDC พร้อม firmware <code>v33-proto1</code> ที่ใช้คู่กันโดยเฉพาะ
 
-ดาวน์โหลดแยกตามรุ่นจาก [GitHub Releases](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases) โดย **หนึ่ง Release มีไฟล์ของรุ่นนั้นเท่านั้น**:
+ดาวน์โหลดแยกตามรุ่นจาก [GitHub Releases](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases) โดย **แต่ละ Release มีเฉพาะไฟล์ของรุ่นนั้น**: `.elf` สำหรับแฟลชผ่าน ST-LINK/SWD และ `.zip` สำหรับซอร์สโค้ด
 
 | Release / เวอร์ชัน | ไฟล์ดาวน์โหลด | ใช้สำหรับ |
 |:--|:--|:--|
 | [SAT motor pilot v1.0.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) | <code>SAT-motor-pilot-1.0.0-win-x64.exe</code> | แอป Windows x64 แบบ portable |
-| [Arduino six-step app v33-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v33-proto1) | <code>stm32f405-sixstep-app-v33-proto1.zip</code> | Firmware ที่ใช้คู่กับแอปเท่านั้น |
-| [Arduino six-step current v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-current-v1) | <code>stm32f405-sixstep-current-v1.zip</code> | Six-step ผ่าน Serial Monitor แบบวัดกระแส; **ไม่ใช้กับแอป** |
-| [Arduino six-step no-current v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-no-current-v1) | <code>stm32f405-sixstep-no-current-v1.zip</code> | Six-step ผ่าน Serial Monitor แบบไม่วัดกระแส; **ไม่ใช้กับแอป** |
+| [Arduino six-step app v33-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v33-proto1) | <code>stm32f405-sixstep-app-v33-proto1.elf</code> / <code>.zip</code> | Firmware ที่ใช้คู่กับแอปเท่านั้น |
+| [Arduino six-step current v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-current-v1) | <code>stm32f405-sixstep-current-v1.elf</code> / <code>.zip</code> | Six-step ผ่าน Serial Monitor แบบวัดกระแส; **ไม่ใช้กับแอป** |
+| [Arduino six-step no-current v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-no-current-v1) | <code>stm32f405-sixstep-no-current-v1.elf</code> / <code>.zip</code> | Six-step ผ่าน Serial Monitor แบบไม่วัดกระแส; **ไม่ใช้กับแอป** |
 
 ค่า SHA-256 ของไฟล์อยู่ในคำอธิบาย Release แต่ละรายการ ดาวน์โหลดเฉพาะรุ่นที่ต้องการและอย่าแฟลช firmware หลายรุ่นรวมกัน
+
+อ่าน [คู่มือแฟลช ELF ผ่าน ST-LINK/SWD](arduino_sixstep_releases/ELF_FLASH_GUIDE_TH.md) ก่อนใช้งาน ไฟล์ ELF คอมไพล์ผ่านแล้วแต่ยังไม่ได้ทดสอบกับบอร์ดจริง
 
 > [!IMPORTANT]
 > SAT motor pilot รองรับเฉพาะ <code>fw=v33-proto1</code>, <code>protocol=1</code> และ <code>current_protection=OFF</code> แอปจะปฏิเสธ firmware คนละรุ่นเพื่อไม่ให้ส่งคำสั่งผิดโปรโตคอล
