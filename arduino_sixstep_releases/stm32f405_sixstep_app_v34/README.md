@@ -2,6 +2,8 @@
 
 This profile pairs with SAT motor pilot v1.1.0 (web or Windows). It preserves the v33 motor control, heartbeat, phase telemetry, and scope features. It adds an **opt-in current readout**, not current limiting or a calibrated three-phase measurement. The v33 source and release remain available separately.
 
+> **Assembled ESC V02 hardware erratum:** C39/C42/C45 are 100 nF directly on the INA181 outputs; TI specifies a 1 nF maximum capacitive load for no sustained oscillation. A board with all three capacitors installed produced 925–1057 trimmed ADC counts of zero-current spread and `CZERO` correctly rejected it. Read the [current-sense hardware erratum](../../hardware/CURRENT_SENSE_ERRATUM_TH.md) and rework/test the board before relying on current readings. Do not relax the zero-noise limit in firmware.
+
 ## Hardware and meaning of the reading
 
 The ESC V02 schematic/BOM lists three INA181A1 amplifiers (U13/U14/U15, nominal gain 20 V/V), three 1 mΩ low-side shunts (R47/R50/R53), and CURRENT_U/V/W at STM32 PC0/PC1/PC2. The installed board was reported to have these populated. The firmware assumes 3.3 V ADC reference, the BOM values, and a U/V/W pin mapping. **Neither actual VDDA nor current polarity, phase mapping, gain, shunt value, and acquisition timing has been verified on this assembled board.** Compare with a known signed current before relying on the ampere estimate.

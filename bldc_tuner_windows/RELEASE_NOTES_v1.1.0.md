@@ -1,5 +1,7 @@
 # SAT motor pilot v1.1.0 — Windows app
 
+**Known ESC V02 hardware erratum (2026-10-27):** Current-sense output capacitors C39/C42/C45 are 100 nF directly on INA181A1 outputs, above the [TI 1 nF capacitive-load specification](https://www.ti.com/lit/ds/symlink/ina181.pdf). The assembled board's `CZERO` test refused to calibrate due to large noise. The app and firmware should keep rejecting that data. Follow the [board rework and retest instructions](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/blob/main/hardware/CURRENT_SENSE_ERRATUM_TH.md) before using current readout. The published app executable is unchanged.
+
 This Windows x64 portable app adds a LOW-side current card and **Enable current / Zero calibrate** controls for the separate [STM32F405 app firmware v34-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v34-current-nominal). The same source also runs as a [web app](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) in Edge or Chrome with Web Serial. v33-proto1 remains supported for existing motor telemetry and controls, without the new current card value.
 
 Asset: `SAT-motor-pilot-1.1.0-win-x64.exe` (portable; no Python required).

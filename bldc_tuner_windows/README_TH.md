@@ -2,6 +2,8 @@
 
 แอปดูสถานะและควบคุมมอเตอร์ BLDC บนเว็บและ Windows เชื่อมกับ STM32F405 ผ่าน USB CDC โดยใช้เฟิร์มแวร์ `../arduino_sixstep_releases/stm32f405_sixstep_app_v34` (`v34-proto1`, protocol 1) สำหรับการวัดกระแส LOW-side แบบประมาณค่า หรือใช้ `v33-proto1` รุ่นเดิมโดยไม่มีตัวเลขกระแส แอปใช้ Web Serial ของ Microsoft Edge หรือ Google Chrome ข้อมูลบนหน้าจอมาจากบอร์ดจริง ไม่มีโหมดจำลอง
 
+> บอร์ดที่ประกอบและทดสอบมี C39/C42/C45 ค่า 100 nF ต่อที่ OUT ของ INA181A1 ทั้งสามช่อง ทำให้ `CZERO` ปฏิเสธการสอบศูนย์ อ่าน [ข้อแก้ไขฮาร์ดแวร์](../hardware/CURRENT_SENSE_ERRATUM_TH.md) ก่อนใช้ตัวเลขกระแส ไม่ควรขยายเกณฑ์ noise ในเฟิร์มแวร์
+
 โลโก้สมบูรณ์ใน `somboon-logo.png` คัดลอกจาก `Desktop/SAT intern/Project/dashboard/dashboardesp32/dashboard/assets/somboon-logo.png` โดยเก็บไฟล์ต้นทางไว้
 
 ## เปิดแอป

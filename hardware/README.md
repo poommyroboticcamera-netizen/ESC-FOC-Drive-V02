@@ -1,6 +1,6 @@
 # Hardware design assets
 
-โฟลเดอร์นี้เก็บ design package ของบอร์ด ESC-FOC-Drive-V02 ได้แก่ schematic 5 หน้า, BOM, Pick-and-Place และ Gerber สำหรับการ review และทำ manufacturing handoff
+โฟลเดอร์นี้เก็บ design package ของบอร์ด ESC-FOC-Drive-V02 ได้แก่ schematic, BOM, Pick-and-Place และ Gerber สำหรับการ review และทำ manufacturing handoff
 
 <div align="center">
 
@@ -13,14 +13,19 @@
 > [!WARNING]
 > ไฟล์เหล่านี้เป็น engineering design package ไม่ใช่ production release ที่ผ่านการรับรอง ก่อนสั่งผลิตต้องยืนยัน revision, footprint, polarity, clearance, copper current capacity, connector pinout, stack-up และรายการชิ้นส่วนกับบอร์ดจริง
 
+> [!CAUTION]
+> พบ [ข้อแก้ไขวงจรวัดกระแส C39/C42/C45](CURRENT_SENSE_ERRATUM_TH.md): schematic/BOM ต่อ 100 nF โดยตรงที่ OUT ของ INA181A1 ทั้งสามช่อง ซึ่งเกินค่า capacitive load ที่ TI ระบุสำหรับการไม่สั่นต่อเนื่อง ห้ามใช้ค่า current หรือขยายเกณฑ์ `CZERO` จนกว่าจะตรวจและแก้บอร์ดจริง
+
 ## Available design files
 
 | Asset | Date | Format | File |
 |:--|:--|:--|:--|
 | Electrical schematic | 2026-08-01 | PDF, 5 pages | [Open schematic](SCH_v2_2026-08-01.pdf) |
+| Current drive schematic used in the current-sense erratum | 2026-09-22 | PDF, 4 pages | [Open current schematic](SCH_drive_2026-09-22.pdf) |
 | Bill of materials | 2026-07-31 | XLSX | [Open BOM](BOM_BLDCv02.xlsx) |
 | Pick-and-Place | 2026-07-31 | XLSX | [Open placement file](PickAndPlace_BLDCV02.xlsx) |
 | PCB manufacturing package | 2026-07-31 | Gerber ZIP | [Download Gerber](Gerber_BLDCV02.zip) |
+| PCB drawing with C39/C42/C45 designators | 2026-09-22 | PDF, 5 pages | [Open PCB drawing](PCB_V02_2026-09-22.pdf) |
 
 ## Board gallery
 

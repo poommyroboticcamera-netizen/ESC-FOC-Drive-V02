@@ -2,6 +2,8 @@
 
 ชุดนี้มีสเก็ตช์ STM32F405 สำหรับบอร์ด ESC V02 จำนวน 4 รุ่น เลือกแฟลชเพียงหนึ่งรุ่นให้ตรงกับงาน ห้ามรวมไฟล์ข้ามโฟลเดอร์
 
+> **ข้อแก้ไขฮาร์ดแวร์:** บอร์ดที่ใส่ C39/C42/C45 ค่า 100 nF ที่เอาต์พุต INA181A1 ต้องอ่าน [erratum วงจรวัดกระแส](../hardware/CURRENT_SENSE_ERRATUM_TH.md) ก่อนใช้รุ่น app v34 สำหรับวัดกระแส การสอบศูนย์ของบอร์ดทดสอบปฏิเสธเพราะค่า ADC แกว่งมาก
+
 ดาวน์โหลดแยก Release ตามรุ่น: [สำหรับแอป v34 ที่วัดกระแส](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v34-current-nominal) · [สำหรับแอป v33 รุ่นเก่า](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v33-proto1) · [วัดกระแส v1 ผ่าน Serial Monitor](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-current-v1) · [ไม่วัดกระแส v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-no-current-v1) แอป Windows รุ่นปัจจุบันอยู่ที่ [SAT motor pilot v1.1.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.1.0-app)
 
 แต่ละ Firmware Release มีไฟล์ `.elf` สำหรับแฟลชผ่าน ST-LINK/SWD และ ZIP ซอร์สโค้ด อ่าน [วิธีเลือกไฟล์และแฟลช ELF อย่างปลอดภัย](ELF_FLASH_GUIDE_TH.md) ก่อนใช้งาน
