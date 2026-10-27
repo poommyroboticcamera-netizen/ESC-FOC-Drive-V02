@@ -1,15 +1,15 @@
 # SAT motor pilot
 
-แอปดูสถานะและควบคุมมอเตอร์ BLDC บน Windows ในหน้าตาแนวรถแข่ง เชื่อมกับ STM32F405 ผ่าน USB CDC โดยใช้เฟิร์มแวร์ `../arduino_sixstep_releases/stm32f405_sixstep_app_v33` (`v33-proto1`, protocol 1) ในโปรเจกต์เดียวกัน แอปใช้ Web Serial ของ Microsoft Edge หรือ Google Chrome ข้อมูลบนหน้าจอมาจากบอร์ดจริง ไม่มีโหมดจำลอง
+แอปดูสถานะและควบคุมมอเตอร์ BLDC บนเว็บและ Windows เชื่อมกับ STM32F405 ผ่าน USB CDC โดยใช้เฟิร์มแวร์ `../arduino_sixstep_releases/stm32f405_sixstep_app_v34` (`v34-proto1`, protocol 1) สำหรับการวัดกระแส LOW-side แบบประมาณค่า หรือใช้ `v33-proto1` รุ่นเดิมโดยไม่มีตัวเลขกระแส แอปใช้ Web Serial ของ Microsoft Edge หรือ Google Chrome ข้อมูลบนหน้าจอมาจากบอร์ดจริง ไม่มีโหมดจำลอง
 
 โลโก้สมบูรณ์ใน `somboon-logo.png` คัดลอกจาก `Desktop/SAT intern/Project/dashboard/dashboardesp32/dashboard/assets/somboon-logo.png` โดยเก็บไฟล์ต้นทางไว้
 
 ## เปิดแอป
 
-1. คอมไพล์และแฟลช `../arduino_sixstep_releases/stm32f405_sixstep_app_v33/stm32f405_sixstep_app_v33.ino` ให้บอร์ด STM32F405 ที่ตรงกับฮาร์ดแวร์จริง
-2. จากซอร์สโค้ดให้ดับเบิลคลิก `Start SAT motor pilot.bat` (ต้องมี Python 3) ตัวเปิดจะใช้ Edge ก่อน Chrome และเปิด `http://127.0.0.1:8765/` หรือดาวน์โหลด `SAT-motor-pilot-1.0.0-win-x64.exe` จาก [Release ของแอป v1.0.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) ซึ่งไม่ต้องติดตั้ง Python (firmware ที่ใช้คู่กันอยู่ใน [Release v33-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v33-proto1))
+1. คอมไพล์และแฟลช `../arduino_sixstep_releases/stm32f405_sixstep_app_v34/stm32f405_sixstep_app_v34.ino` หรือ ELF จาก [Release v34](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v34-current-nominal) ให้บอร์ด STM32F405 ที่มีวงจรวัดกระแสครบ
+2. จากซอร์สโค้ดให้ดับเบิลคลิก `Start SAT motor pilot.bat` (ต้องมี Python 3) เพื่อเปิด `http://127.0.0.1:8765/`, เปิด [เว็บแอป](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) หรือดาวน์โหลด `SAT-motor-pilot-1.1.0-win-x64.exe` จาก [Release ของแอป v1.1.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.1.0-app) ซึ่งไม่ต้องติดตั้ง Python
 3. ต่อ USB แล้วกด **เชื่อมต่อบอร์ด** และเลือก COM port ของ STM32F405 ในหน้าต่างเบราว์เซอร์
-4. แอปตรวจ `HELLO`, protocol 1, `current_protection=OFF`, รับ `STATUS` และเปิด `STREAM ON 100` ก่อนเปิดปุ่มควบคุม
+4. แอปตรวจ `HELLO` รุ่น v33 หรือ v34, protocol 1, `current_protection=OFF`, รับ `STATUS` และเปิด `STREAM ON 100` ก่อนเปิดปุ่มควบคุม
 
 เบราว์เซอร์ต้องรองรับ Web Serial และหน้าเว็บต้องเปิดจาก **HTTPS หรือ localhost** หากไม่มี Python ให้ใช้เซิร์ฟเวอร์ static HTTP ที่ localhost กับโฟลเดอร์นี้แทน การเปิด `index.html` ตรงจากไฟล์อาจทำให้ Web Serial ไม่พร้อมใช้งาน เว็บออนไลน์ต้องเปิดเป็นหน้าต่าง/แท็บหลักใน Edge หรือ Chrome บนคอมพิวเตอร์ที่ต่อบอร์ด USB ไม่ใช่เว็บบนมือถือหรือ iframe ที่บล็อก Serial การเชื่อมต่อเกิดในเครื่องผู้ใช้โดยตรง ไม่ใช่เซิร์ฟเวอร์ควบคุมมอเตอร์ระยะไกล
 
@@ -27,9 +27,9 @@
 
 ## ขอบเขตค่าที่แสดง
 
-Duty, state, fault, direction, period, BEMF lock, step, PWM และ phase ADC counts อ่านจากเฟิร์มแวร์ v33 โดยตรง ค่าเฟสเป็น ADC counts จาก PA0/PA1/PA2 และ **ไม่ใช่แรงดันเฟสที่สอบเทียบแล้ว** ค่า `phase_valid` และ `phase_age_us` ใช้บอกคุณภาพ/อายุข้อมูล สตรีม 10 ตัวอย่าง/วินาทีเป็นภาพรวม telemetry ไม่ใช่รูปคลื่น PWM ความถี่สูง
+Duty, state, fault, direction, period, BEMF lock, step, PWM และ phase ADC counts อ่านจากเฟิร์มแวร์ v33/v34 โดยตรง ค่าเฟสเป็น ADC counts จาก PA0/PA1/PA2 และ **ไม่ใช่แรงดันเฟสที่สอบเทียบแล้ว** ค่า `phase_valid` และ `phase_age_us` ใช้บอกคุณภาพ/อายุข้อมูล สตรีม 10 ตัวอย่าง/วินาทีเป็นภาพรวม telemetry ไม่ใช่รูปคลื่น PWM ความถี่สูง
 
-เฟิร์มแวร์ยังไม่มีค่าแรงดันบัส กระแสที่ยืนยันเป็นแอมแปร์ RPM อุณหภูมิ หรือพลังงาน แอปไม่แสดงตัวเลขสมมติให้ค่ากลุ่มนี้ การวัดกระแสในเฟิร์มแวร์ยังเป็น diagnostic ที่ไม่ยืนยัน และ current protection ยังปิดอยู่
+เฟิร์มแวร์ v34 แสดง `~A` จากตัวอย่างของชันต์เฟส LOW ระหว่างขับ หลังเปิด `CSCAN ON` และสอบศูนย์ `CZERO` ขณะหยุดและไม่มีกระแส ค่าคำนวณด้วย gain 20, shunt 1 mΩ และ VDDA สมมติ 3.3 V ยังต้องเทียบกับกระแสอ้างอิงบนบอร์ดจริง ไม่ใช่ RMS, Id/Iq, กระแสแบตเตอรี่ หรือ current trip; `current_protection=OFF` แอปซ่อนตัวเลขเมื่อ sample ไม่ผ่านหรือข้อมูลเก่า รุ่น v33 ไม่ส่งค่ากระแสนี้ รายละเอียดใน [คู่มือ v34](../arduino_sixstep_releases/stm32f405_sixstep_app_v34/README.md) แรงดันบัส, RPM, อุณหภูมิ และพลังงานยังไม่มีค่าที่สอบเทียบ
 
 ## สถานะการตรวจสอบ
 
@@ -61,7 +61,7 @@ With the updated firmware installed, connect the board, run to CLOSED_LOOP, open
 
 ## Windows desktop app
 
-Download `SAT-motor-pilot-1.0.0-win-x64.exe` from GitHub Releases for the standalone Windows desktop app. It embeds the app and Chromium runtime, opens in its own window, and does not require Python, a separate browser, or a local web server. Generated executables are intentionally not committed into the source tree.
+Download `SAT-motor-pilot-1.1.0-win-x64.exe` from GitHub Releases for the standalone Windows desktop app. It embeds the app and Chromium runtime, opens in its own window, and does not require Python, a separate browser, or a local web server. Generated executables are intentionally not committed into the source tree.
 
 The COM dropdown lists Windows serial ports detected on that computer. Plug in the STM32F405 with a USB data cable, press the refresh button beside the port list, choose its COM port, then press **Connect board**. If no port appears, check Windows Device Manager and install the board's USB CDC driver if needed. The port number can differ between computers, so choose it again on each computer.
 

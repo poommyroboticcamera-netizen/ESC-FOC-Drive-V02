@@ -4,15 +4,15 @@
 
 # ESC-FOC-Drive-V02
 
-**STM32F405 three-phase BLDC/FOC engineering platform พร้อม Arduino six-step และแอป SAT motor pilot สำหรับ Windows**
+**STM32F405 three-phase BLDC/FOC engineering platform พร้อม Arduino six-step และแอป SAT motor pilot บนเว็บ/Windows**
 
-[![Release](https://img.shields.io/badge/release-v1.0.0--app-2563EB?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app)
+[![Release](https://img.shields.io/badge/release-v1.1.0--app-2563EB?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.1.0-app)
 [![MCU](https://img.shields.io/badge/MCU-STM32F405RGT6-0B1220?style=for-the-badge&logo=stmicroelectronics&logoColor=38BDF8)](https://www.st.com/en/microcontrollers-microprocessors/stm32f405rg.html)
 [![Status](https://img.shields.io/badge/status-engineering_prototype-DC2626?style=for-the-badge)](#คำเตือนด้านความปลอดภัย)
 [![Switch to English](https://img.shields.io/badge/English-switch-475569?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02)
 [![Thai selected](https://img.shields.io/badge/%E0%B9%84%E0%B8%97%E0%B8%A2-selected-2563EB?style=for-the-badge)](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/tree/readme-th)
 
-[เปิดแอปบนเว็บ](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) · [ดาวน์โหลดแอป](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) · [เลือก Firmware](#firmware-ที่มีให้เลือก) · [วิธีใช้แอป](#เริ่มใช้งาน-sat-motor-pilot) · [Hardware](hardware/README.md) · [รุ่นเก่า](#รุ่นเก่าที่ยังเก็บไว้)
+[เปิดแอปบนเว็บ](https://poommyroboticcamera-netizen.github.io/ESC-FOC-Drive-V02/) · [ดาวน์โหลดแอป](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.1.0-app) · [เลือก Firmware](#firmware-ที่มีให้เลือก) · [วิธีใช้แอป](#เริ่มใช้งาน-sat-motor-pilot) · [Hardware](hardware/README.md) · [รุ่นเก่า](#รุ่นเก่าที่ยังเก็บไว้)
 
 </div>
 
@@ -20,15 +20,17 @@
 
 ---
 
-## รุ่นแนะนำ: v1.0.0-app
+## รุ่นแนะนำ: SAT motor pilot v1.1.0 กับ firmware v34
 
-รุ่นนี้เพิ่ม **SAT motor pilot** สำหรับดูสถานะ จูนค่าเริ่มต้น ควบคุม six-step และบันทึก phase telemetry ผ่าน USB CDC พร้อม firmware <code>v33-proto1</code> ที่ใช้คู่กันโดยเฉพาะ
+รุ่นนี้เพิ่มการแสดง **กระแส LOW-side จาก INA181A1/ชันต์ 1 mΩ** ใน SAT motor pilot หลังเปิดการวัดและสอบศูนย์ด้วย firmware <code>v34-proto1</code> ค่าแอมป์เป็นเพียงค่าประมาณ ต้องเทียบกับกระแสอ้างอิง และยังไม่มี current trip แอปยังใช้กับ <code>v33-proto1</code> สำหรับฟังก์ชันเดิมได้ โดยไม่แสดงกระแสใหม่
 
 ดาวน์โหลดแยกตามรุ่นจาก [GitHub Releases](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases) โดย **แต่ละ Release มีเฉพาะไฟล์ของรุ่นนั้น**: `.elf` สำหรับแฟลชผ่าน ST-LINK/SWD และ `.zip` สำหรับซอร์สโค้ด
 
 | Release / เวอร์ชัน | ไฟล์ดาวน์โหลด | ใช้สำหรับ |
 |:--|:--|:--|
-| [SAT motor pilot v1.0.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) | <code>SAT-motor-pilot-1.0.0-win-x64.exe</code> | แอป Windows x64 แบบ portable |
+| [SAT motor pilot v1.1.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.1.0-app) | <code>SAT-motor-pilot-1.1.0-win-x64.exe</code> | แอป Windows x64 รุ่นที่แสดงกระแสกับ v34 |
+| [Arduino six-step app v34-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v34-current-nominal) | <code>stm32f405-sixstep-app-v34-current-nominal.elf</code> / <code>.zip</code> | Firmware สำหรับแอปที่อ่านชันต์ LOW-side |
+| [SAT motor pilot v1.0.0](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/v1.0.0-app) | <code>SAT-motor-pilot-1.0.0-win-x64.exe</code> | แอป Windows x64 รุ่นเดิมสำหรับ v33 |
 | [Arduino six-step app v33-proto1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-app-v33-proto1) | <code>stm32f405-sixstep-app-v33-proto1.elf</code> / <code>.zip</code> | Firmware ที่ใช้คู่กับแอปเท่านั้น |
 | [Arduino six-step current v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-current-v1) | <code>stm32f405-sixstep-current-v1.elf</code> / <code>.zip</code> | Six-step ผ่าน Serial Monitor แบบวัดกระแส; **ไม่ใช้กับแอป** |
 | [Arduino six-step no-current v1](https://github.com/poommyroboticcamera-netizen/ESC-FOC-Drive-V02/releases/tag/arduino-sixstep-no-current-v1) | <code>stm32f405-sixstep-no-current-v1.elf</code> / <code>.zip</code> | Six-step ผ่าน Serial Monitor แบบไม่วัดกระแส; **ไม่ใช้กับแอป** |
@@ -38,25 +40,27 @@
 อ่าน [คู่มือแฟลช ELF ผ่าน ST-LINK/SWD](arduino_sixstep_releases/ELF_FLASH_GUIDE_TH.md) ก่อนใช้งาน ไฟล์ ELF คอมไพล์ผ่านแล้วแต่ยังไม่ได้ทดสอบกับบอร์ดจริง
 
 > [!IMPORTANT]
-> SAT motor pilot รองรับเฉพาะ <code>fw=v33-proto1</code>, <code>protocol=1</code> และ <code>current_protection=OFF</code> แอปจะปฏิเสธ firmware คนละรุ่นเพื่อไม่ให้ส่งคำสั่งผิดโปรโตคอล
+> SAT motor pilot v1.1.0 รองรับ <code>fw=v33-proto1</code> และ <code>fw=v34-proto1</code> เมื่อเป็น <code>protocol=1</code> และ <code>current_protection=OFF</code> แอปจะปฏิเสธ firmware คนละรุ่นเพื่อไม่ให้ส่งคำสั่งผิดโปรโตคอล
 
 ## Firmware ที่มีให้เลือก
 
 | Profile | Source | Current sense | วิธีควบคุม | สถานะ |
 |:--|:--|:--|:--|:--|
-| App v33 | [stm32f405_sixstep_app_v33](arduino_sixstep_releases/stm32f405_sixstep_app_v33) | Diagnostic เท่านั้น, ยังไม่ยืนยันหน่วย A | SAT motor pilot | รุ่นแนะนำสำหรับแอป |
+| App v33 | [stm32f405_sixstep_app_v33](arduino_sixstep_releases/stm32f405_sixstep_app_v33) | Diagnostic เท่านั้น, ยังไม่ยืนยันหน่วย A | SAT motor pilot | รุ่นเดิมที่เก็บไว้ |
+| App v34 | [stm32f405_sixstep_app_v34](arduino_sixstep_releases/stm32f405_sixstep_app_v34) | LOW-side ตัวอย่างทีละเฟส, แอมป์ประมาณ, protection ปิด | SAT motor pilot v1.1.0 / เว็บ | รุ่นแนะนำเมื่อมีวงจรวัดกระแสครบ |
 | Current | [stm32f405_sixstep_current](arduino_sixstep_releases/stm32f405_sixstep_current) | INA181 U/V/W + software trip | Serial Monitor | Bench bring-up |
 | No current | [stm32f405_sixstep_no_current](arduino_sixstep_releases/stm32f405_sixstep_no_current) | ปิด ไม่อ่าน PC0/PC1/PC2 | Serial Monitor | Logic/gate test |
 | Custom VESC | [vesc_firmware_custom](vesc_firmware_custom) | Board-specific current path | VESC Tool / terminal | งานพัฒนาแยก |
 
 อ่านรายละเอียดการเลือกและแฟลชที่ [Arduino six-step release guide](arduino_sixstep_releases/README_TH.md)
 
-- **App v33** มี heartbeat 1500 ms, watchdog, telemetry, phase stream และ scope capture
+- **App v34** มี heartbeat 1500 ms, watchdog, telemetry, phase stream, scope และการอ่านกระแสแบบ opt-in หลังสอบศูนย์
+- **App v33** เก็บไว้สำหรับ firmware เดิม ฟังก์ชันกระแสใหม่ใช้ไม่ได้
 - **Current** มี zero calibration และ software trip แต่ไม่ใช่ hardware short-circuit protection
 - **No current** ไม่มี current feedback หรือ software trip ต้องจำกัดกระแสด้วยแหล่งจ่ายภายนอก
 - **Custom VESC** เป็น codebase คนละสาย ห้ามแฟลชสลับโดยไม่ตรวจ target และคู่มือ
 
-ไลบรารี [SolidGeek/VescUart](https://github.com/SolidGeek/VescUart) ไม่ได้ใช้กับ SAT motor pilot เพราะ VescUart ใช้ VESC binary packet protocol ส่วนแอปนี้ใช้ ASCII protocol ของ <code>v33-proto1</code> ผ่าน USB CDC
+ไลบรารี [SolidGeek/VescUart](https://github.com/SolidGeek/VescUart) ไม่ได้ใช้กับ SAT motor pilot เพราะ VescUart ใช้ VESC binary packet protocol ส่วนแอปนี้ใช้ ASCII protocol ของ <code>v33/v34-proto1</code> ผ่าน USB CDC
 
 ## เริ่มใช้งาน SAT motor pilot
 
@@ -66,8 +70,8 @@
 
 ### 1. แฟลช firmware ที่ตรงกับแอป
 
-1. ดาวน์โหลด <code>stm32f405-sixstep-app-v33-proto1.zip</code> แล้วแตกไฟล์
-2. เปิด <code>stm32f405_sixstep_app_v33.ino</code> ด้วย Arduino IDE 2
+1. ดาวน์โหลด <code>stm32f405-sixstep-app-v34-current-nominal.zip</code> แล้วแตกไฟล์ หรือใช้ ELF จาก Release รุ่นเดียวกันผ่าน ST-LINK
+2. เปิด <code>stm32f405_sixstep_app_v34.ino</code> ด้วย Arduino IDE 2 เมื่อคอมไพล์จากซอร์ส
 3. ติดตั้งแพ็กเกจ **STM32 MCU based boards** ของ STMicroelectronics
 4. เลือก Board <code>Generic STM32F4 series</code>, part <code>Generic F405RGTx</code>
 5. เลือก USB <code>CDC (generic Serial supersede U(S)ART)</code> และ Low/Full Speed
@@ -76,7 +80,7 @@
 
 ### 2. เปิดแอป
 
-1. ดาวน์โหลด <code>SAT-motor-pilot-1.0.0-win-x64.exe</code>
+1. ดาวน์โหลด <code>SAT-motor-pilot-1.1.0-win-x64.exe</code> หรือเปิดแอปบนเว็บ
 2. เปิดไฟล์ แอปเป็น portable ไม่ต้องติดตั้ง Python
 3. ต่อ STM32F405 ด้วยสาย USB data
 4. กดรีเฟรช เลือก COM ของบอร์ด แล้วกด **Connect board**
@@ -93,7 +97,7 @@
 5. กด RUN และเฝ้าดู state, fault, duty, phase ADC และ BEMF lock
 6. กด STOP ทันทีเมื่อมอเตอร์สั่น ค้าง ร้อน หรือกระแสเพิ่มผิดปกติ
 
-ค่า Phase U/V/W เป็น raw ADC counts ไม่ใช่แรงดันที่สอบเทียบแล้ว ค่า current, RPM, bus voltage และ temperature ที่ยังไม่ยืนยันจะแสดงเป็น N/A แอปไม่สร้างค่าจำลอง
+เมื่อใช้ v34 ให้กด **เปิดวัดกระแส** และ **สอบศูนย์** ขณะมอเตอร์หยุดและไม่มีกระแสก่อน RUN ค่า Phase U/V/W ยังเป็น raw ADC counts ไม่ใช่แรงดันที่สอบเทียบแล้ว ค่ากระแสที่แสดงเป็นตัวอย่างชันต์ LOW-side ทีละเฟสพร้อมเครื่องหมาย `~` จนกว่าจะเทียบกับกระแสอ้างอิง ไม่ใช่ Id/Iq หรือกระแสแบตเตอรี่ ค่า RPM, bus voltage และ temperature ที่ยังไม่ยืนยันแสดงเป็น N/A แอปไม่สร้างค่าจำลอง
 
 ## ฟังก์ชันของแอป
 
@@ -155,7 +159,7 @@
 
 ## โครงสร้าง Repository
 
-    arduino_sixstep_releases/         Current / no-current / app-v33 profiles
+    arduino_sixstep_releases/         Current / no-current / app-v33 / app-v34 profiles
     bldc_tuner_windows/               SAT motor pilot source
     arduino_stm32f405_bldc_test/      Legacy STM32 bring-up (kept)
     arduino_eg2132_bldc_test/         Legacy external Arduino test (kept)
@@ -174,7 +178,8 @@ Generated executables, Electron dependencies, build output และ temporary f
 | Electron Windows x64 portable build | ผ่าน |
 | App ↔ firmware handshake fields | ตรวจความสอดคล้องแล้ว |
 | Release ZIP structure / SHA-256 | ผ่าน |
-| Arduino v1 profiles compile ในรอบ release นี้ | ต้องกด Verify ใน Arduino IDE เนื่องจากเครื่อง build ไม่มี Arduino CLI |
+| Arduino app v34 compile ด้วย Arduino CLI / STM32duino 3.0.0 | ผ่าน, ELF สำหรับ F405RGTX |
+| Arduino v1 และ v33 profiles | เก็บ release และผล Verify เดิมไว้แยก |
 | ทดสอบกับบอร์ดและมอเตอร์จริง | ยังต้องดำเนินการ |
 
 การ compile และเปิดแอปได้ไม่ยืนยัน ADC timing, dead time, gate waveform, current accuracy หรือ fault response บนภาคกำลังจริง

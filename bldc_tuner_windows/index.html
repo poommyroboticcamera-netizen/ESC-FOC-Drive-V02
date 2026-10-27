@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=50">
+  <link rel="stylesheet" href="styles.css?v=51">
 </head>
 <body>
   <div class="shell">
@@ -34,7 +34,7 @@
       <div id="notice" class="notice">ใช้ Edge หรือ Chrome บนเครื่องที่ต่อ STM32F405 ผ่าน USB แล้วกดเชื่อมต่อบอร์ด</div>
       <div class="page active" id="page-dashboard">
       <section class="hero">
-        <div class="hero-title"><span class="overline">LIVE DRIVE / SIX STEP SENSORLESS</span><h1>Motor telemetry</h1><p>ข้อมูลจากเฟิร์มแวร์ v33-proto1 ผ่าน USB CDC</p></div>
+        <div class="hero-title"><span class="overline">LIVE DRIVE / SIX STEP SENSORLESS</span><h1>Motor telemetry</h1><p>ข้อมูลจากเฟิร์มแวร์ v33/v34 ผ่าน USB CDC</p></div>
         <div class="hero-status"><span class="overline">CONTROLLER STATE</span><strong id="stateValue">—</strong><small id="faultValue">FAULT —</small></div>
       </section>
 
@@ -66,11 +66,11 @@
             <div><span>CLOSED LOOP STEPS</span><strong id="closedValue">—</strong></div>
             <div><span>TARGET PERIOD</span><strong><b id="periodValue">—</b> µs</strong></div>
             <div><span>MEASURED PERIOD</span><strong><b id="measuredValue">—</b> µs</strong></div>
-            <div class="unavailable-current"><span>Id / กระแสแกน d</span><strong id="idCurrentValue">N/A</strong><small>ยังวัดไม่ได้ · ต้องสอบเทียบกระแสเฟสและทราบมุมโรเตอร์</small></div>
-            <div class="unavailable-current"><span>Iq / กระแสแกน q</span><strong id="iqCurrentValue">N/A</strong><small>ยังวัดไม่ได้ · ต้องสอบเทียบกระแสเฟสและทราบมุมโรเตอร์</small></div>
+            <div class="current-live"><span>กระแสชันต์เฟส LOW</span><strong id="lowSideCurrentValue">—</strong><small id="currentPhaseLabel">รอการสอบศูนย์</small></div>
+            <div class="current-live"><span>สถานะการวัดกระแส</span><strong id="currentMonitorValue">—</strong><small id="currentMonitorDetail">INA181A1 · 1 mΩ</small></div>
           </div>
           <div class="health-row"><div><span>MCU / TIMERS / IWDG</span><strong id="healthValue">—</strong></div><div><span>APP HEARTBEAT</span><strong id="heartbeatValue">—</strong></div></div>
-          <div class="not-available"><span>ยังไม่มีค่าที่สอบเทียบแล้ว</span><strong>แรงดันบัส · กระแส · RPM · อุณหภูมิ</strong></div>
+          <div class="not-available current-actions"><div><span>กระแสที่แสดงเป็นค่าประมาณหลังสอบศูนย์</span><strong id="currentHint">ต้องเทียบกับกระแสอ้างอิงก่อนใช้ตัดสินใจ · ยังไม่มี current trip</strong></div><div class="current-button-row"><button id="currentScanBtn" class="button" disabled>เปิดวัดกระแส</button><button id="currentZeroBtn" class="button" disabled>สอบศูนย์</button></div></div>
         </article>
       </section>
       </div>
@@ -146,12 +146,12 @@
       </div>
     </main>
     </div>
-    <footer>SAT motor pilot / F405 · LIVE USB SERIAL · CURRENT DATA UNVERIFIED / PROTECTION OFF</footer>
+    <footer>SAT motor pilot / F405 · LIVE USB SERIAL · CURRENT SCALE NOMINAL / PROTECTION OFF · Id/Iq NOT AVAILABLE</footer>
   </div>
-  <script src="i18n.js?v=47"></script>
+  <script src="i18n.js?v=52"></script>
   <script src="chart_scale.js?v=46"></script>
   <script src="rt_charts.js?v=50"></script>
   <script src="scope_plot.js?v=48"></script>
-  <script src="app.js?v=51"></script>
+  <script src="app.js?v=52"></script>
 </body>
 </html>

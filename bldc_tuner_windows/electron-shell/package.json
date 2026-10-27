@@ -1,6 +1,6 @@
 {
   "name": "sat-motor-pilot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "SAT motor pilot desktop app for STM32F405 USB CDC",
   "main": "main.js",

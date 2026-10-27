@@ -14,6 +14,7 @@
     port: null, availablePorts: [], reader: null, writer: null, readTask: null, writeChain: Promise.resolve(),
     closing: false, ready: false, rxBuffer: '', pending: new Map(),
     status: null, phase: null, phaseSamples: [], lastPhaseUs: null, phaseTimeUs: 0,
+    currentSupported: false,
     startupProfileSupported: false, profileLoaded: false,
     dutyResponseSupported: false, responseLoaded: false,
     scopeSupported: false, scopeLiveSupported: false, scopeLive: false, scopeLiveFrame: false,
@@ -48,6 +49,11 @@
 
   function integer(value, fallback = null) {
     if (typeof value !== 'string' || !/^\d+$/.test(value)) return fallback;
+    const number = Number(value);
+    return Number.isSafeInteger(number) ? number : fallback;
+  }
+  function signedInteger(value, fallback = null) {
+    if (typeof value !== 'string' || !/^-?\d+$/.test(value)) return fallback;
     const number = Number(value);
     return Number.isSafeInteger(number) ? number : fallback;
   }
@@ -241,10 +247,11 @@
       app.readTask = readLoop();
       $('linkState').textContent = 'HANDSHAKE';
       const hello = fields(await request('HELLO', 'HELLO', 4000));
-      if (hello.protocol !== '1' || !hello.fw?.startsWith('v33-proto1') ||
+      if (hello.protocol !== '1' || !/^v3[34]-proto1$/.test(hello.fw || '') ||
           hello.current_protection !== 'OFF') {
-        throw new Error(L('Firmware does not match SAT motor pilot v33-proto1 protocol','เฟิร์มแวร์ไม่ตรงกับโปรโตคอล SAT motor pilot v33-proto1'));
+        throw new Error(L('Firmware does not match SAT motor pilot v33/v34 protocol','เฟิร์มแวร์ไม่ตรงกับโปรโตคอล SAT motor pilot v33/v34'));
       }
+      app.currentSupported = hello.caps?.split(',').includes('current_monitor') || false;
       app.scopeSupported = hello.caps?.split(',').includes('scope_capture') || false;
       app.scopeLiveSupported = hello.caps?.split(',').includes('scope_live') || false;
       app.startupProfileSupported = hello.caps?.split(',').includes('startup_profile') || false;
@@ -314,6 +321,7 @@
     app.status = null;
     app.phase = null;
     app.scopeSupported = false; app.scopeLiveSupported = false; app.scopeReady = false;
+    app.currentSupported = false;
     app.startupProfileSupported = false; app.profileLoaded = false;
     app.dutyResponseSupported = false; app.responseLoaded = false;
     window.SATCharts.setActive(app.page === 'rt' || app.page === 'scope');
@@ -585,6 +593,40 @@
     $('closedValue').textContent = integer(s?.closed_loop_steps)?.toLocaleString() || '—';
     $('periodValue').textContent = integer(s?.target_period_us)?.toLocaleString() || '—';
     $('measuredValue').textContent = integer(s?.measured_period_us)?.toLocaleString() || '—';
+    const currentAge = integer(s?.current_age_us);
+    const currentMa = signedInteger(s?.current_estimate_mA);
+    const currentValid = fresh && app.currentSupported && s.current_sample === '1' &&
+      /^[UVW]$/.test(s.current_phase || '') && currentAge !== null &&
+      currentAge <= 100000 && currentMa !== null && now - app.lastStatusAt < 900;
+    $('lowSideCurrentValue').textContent = currentValid ? `~${(currentMa / 1000).toFixed(2)} A` : '—';
+    $('currentPhaseLabel').textContent = currentValid
+      ? L(`LOW ${s.current_phase} · PWM ON · ${(currentAge / 1000).toFixed(1)} ms at capture`,
+          `เฟส LOW ${s.current_phase} · PWM ON · อายุ ${(currentAge / 1000).toFixed(1)} ms ตอนส่ง`)
+      : !app.currentSupported ? L('Requires v34 firmware','ต้องใช้เฟิร์มแวร์ v34')
+      : s?.current_zero !== 'READY' ? L('Zero calibration required','ต้องสอบศูนย์ก่อน')
+      : L('Waiting for a valid PWM sample','รอตัวอย่าง PWM ที่ใช้ได้');
+    $('currentMonitorValue').textContent = !app.currentSupported ? 'N/A'
+      : !fresh ? L('STALE','ข้อมูลเก่า')
+      : s.current_monitor_ok !== '1' ? L('CHECK','ตรวจสอบ')
+      : s.current_zero === 'BUSY' ? L('ZEROING','สอบศูนย์')
+      : s.current_scan !== 'ON' ? 'OFF'
+      : s.current_zero !== 'READY' ? L('ZERO NEEDED','รอสอบศูนย์')
+      : currentValid ? L('LIVE','สด') : L('WAITING','รอข้อมูล');
+    $('currentMonitorDetail').textContent = app.currentSupported
+      ? L('INA181A1 · 1 mΩ · nominal 3.3 V ADC scale','INA181A1 · 1 mΩ · สเกล ADC 3.3 V สมมติ')
+      : L('Current telemetry is not in v33','v33 ยังไม่มีข้อมูลกระแสให้แอป');
+    $('currentHint').textContent = app.currentSupported
+      ? L('One LOW-side shunt per sample · nominal amperes; not RMS, Id/Iq or a current trip',
+          'วัดชันต์เฟส LOW ทีละช่อง · แอมป์ยังเป็นค่าประมาณ ไม่ใช่ RMS, Id/Iq หรือวงจรตัดกระแส')
+      : L('Flash v34 to enable current measurement; v33 motor control still works',
+          'แฟลช v34 เพื่อวัดกระแส · v33 ยังใช้ควบคุมมอเตอร์ได้');
+    $('currentScanBtn').disabled = !app.currentSupported || !fresh || running || s.current_zero === 'BUSY';
+    $('currentScanBtn').textContent = s?.current_scan === 'ON'
+      ? L('Disable current','ปิดวัดกระแส') : L('Enable current','เปิดวัดกระแส');
+    $('currentZeroBtn').disabled = !app.currentSupported || !fresh || running ||
+      s.current_scan !== 'ON' || s.current_monitor_ok !== '1' || s.current_zero === 'BUSY';
+    $('currentZeroBtn').textContent = s?.current_zero === 'BUSY'
+      ? L('Zeroing…','กำลังสอบศูนย์…') : L('Zero calibrate','สอบศูนย์');
     $('healthValue').textContent = s ? [s.init_ok, s.timer_ok, s.iwdg_ok].every((x) => x === '1') ? 'READY' : 'CHECK' : '—';
     $('heartbeatValue').textContent = s?.heartbeat || '—';
     $('armBtn').disabled = !fresh || running || s.state === 'ARMED_IDLE';
@@ -677,6 +719,14 @@
   $('runBtn').addEventListener('click', () => void action('RUN', 'RUN'));
   $('stopBtn').addEventListener('click', () => void action('STOP', 'STOP'));
   $('stopQuickBtn').addEventListener('click', () => void action('STOP', 'STOP'));
+  $('currentScanBtn').addEventListener('click', () => {
+    if (!app.currentSupported || ACTIVE.has(app.status?.state)) return;
+    void action(app.status?.current_scan === 'ON' ? 'CSCAN OFF' : 'CSCAN ON', 'CSCAN');
+  });
+  $('currentZeroBtn').addEventListener('click', () => {
+    if (!app.currentSupported || ACTIVE.has(app.status?.state) || app.status?.current_scan !== 'ON') return;
+    void action('CZERO', 'CZERO');
+  });
   for (const [overview, original] of [
     ['overviewArmBtn','armBtn'], ['overviewRunBtn','runBtn'], ['overviewStopBtn','stopBtn'],
     ['overviewSetDutyBtn','setDutyBtn'], ['overviewSetPeriodBtn','setPeriodBtn'],
